@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,41 +10,41 @@
     --background: 39 100% 95%;
     --foreground: 120 100% 22%;
 
-    --card: 39 100% 98%;
-    --card-foreground: 120 100% 14%;
+    --card: 120 100% 22%;
+    --card-foreground: 39 100% 98%;
 
-    --popover: 39 100% 98%;
-    --popover-foreground: 120 100% 14%;
+    --popover: 120 100% 22%;
+    --popover-foreground: 39 100% 98%;
 
-    --primary: 120 100% 22%;
-    --primary-foreground: 39 100% 98%;
+    --primary: 39 100% 98%;
+    --primary-foreground: 120 100% 22%;
 
     --secondary: 43 74% 49%;
     --secondary-foreground: 39 100% 98%;
 
-    --muted: 39 30% 90%;
-    --muted-foreground: 120 20% 40%;
+    --muted: 120 30% 30%;
+    --muted-foreground: 39 60% 90%;
 
     --accent: 43 74% 49%;
-    --accent-foreground: 120 100% 14%;
+    --accent-foreground: 39 100% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 39 100% 98%;
 
-    --border: 39 30% 85%;
+    --border: 120 30% 30%;
     --input: 39 30% 85%;
     --ring: 120 100% 22%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 39 100% 98%;
-    --sidebar-foreground: 120 100% 14%;
-    --sidebar-primary: 120 100% 22%;
-    --sidebar-primary-foreground: 39 100% 98%;
+    --sidebar-background: 120 100% 22%;
+    --sidebar-foreground: 39 100% 98%;
+    --sidebar-primary: 39 100% 98%;
+    --sidebar-primary-foreground: 120 100% 22%;
     --sidebar-accent: 43 74% 49%;
     --sidebar-accent-foreground: 39 100% 98%;
-    --sidebar-border: 39 30% 85%;
-    --sidebar-ring: 120 100% 22%;
+    --sidebar-border: 120 30% 30%;
+    --sidebar-ring: 39 100% 98%;
   }
 
   .dark {
@@ -110,7 +111,7 @@
 
 @layer components {
   .glass-card {
-    @apply bg-white/70 backdrop-blur-sm border border-white/20 shadow-lg;
+    @apply bg-green/90 backdrop-blur-sm border border-white/20 shadow-lg text-cream;
   }
 
   .button-hover {

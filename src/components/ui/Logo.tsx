@@ -19,10 +19,10 @@ const Logo: React.FC<LogoProps> = ({
     lg: variant === 'full' ? 'h-14 md:h-16' : 'h-14 w-14 md:h-16 md:w-16',
   };
 
-  // Use the uploaded images or existing logo paths
+  // Use the uploaded images
   const logoPath = variant === 'full' 
-    ? '/lovable-uploads/3f2816f4-47e1-4f64-8996-ba5b244837c4.png'
-    : '/lovable-uploads/358fd915-e2c6-42fa-a819-a78319174f63.png';
+    ? '/lovable-uploads/e13add34-cbb1-4504-98fc-7bfa3cf8a337.png'
+    : '/lovable-uploads/397eaf8e-e322-4c71-a62d-bf47b0ae4489.png';
 
   return (
     <div className={cn('flex items-center transition-all', className)}>
