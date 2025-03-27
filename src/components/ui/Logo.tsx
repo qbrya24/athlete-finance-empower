@@ -15,13 +15,14 @@ const Logo: React.FC<LogoProps> = ({
 }) => {
   const sizeClasses = {
     sm: variant === 'full' ? 'h-8' : 'h-8 w-8',
-    md: variant === 'full' ? 'h-12' : 'h-12 w-12',
-    lg: variant === 'full' ? 'h-16' : 'h-16 w-16',
+    md: variant === 'full' ? 'h-10 md:h-12' : 'h-10 w-10 md:h-12 md:w-12',
+    lg: variant === 'full' ? 'h-14 md:h-16' : 'h-14 w-14 md:h-16 md:w-16',
   };
 
+  // Use the uploaded images or existing logo paths
   const logoPath = variant === 'full' 
-    ? '/lovable-uploads/c5c426d4-54a4-40d9-903c-1f4270b9d926.png'
-    : '/lovable-uploads/c4abadae-acd1-44ed-8069-9158271a5af6.png';
+    ? '/lovable-uploads/3f2816f4-47e1-4f64-8996-ba5b244837c4.png'
+    : '/lovable-uploads/358fd915-e2c6-42fa-a819-a78319174f63.png';
 
   return (
     <div className={cn('flex items-center transition-all', className)}>

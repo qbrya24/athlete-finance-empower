@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -101,12 +100,12 @@
     @apply font-medium tracking-tight;
   }
 
-  h1 { @apply text-4xl md:text-5xl lg:text-6xl; }
-  h2 { @apply text-3xl md:text-4xl lg:text-5xl; }
-  h3 { @apply text-2xl md:text-3xl; }
-  h4 { @apply text-xl md:text-2xl; }
-  h5 { @apply text-lg md:text-xl; }
-  h6 { @apply text-base md:text-lg; }
+  h1 { @apply text-3xl md:text-4xl lg:text-5xl xl:text-6xl; }
+  h2 { @apply text-2xl md:text-3xl lg:text-4xl xl:text-5xl; }
+  h3 { @apply text-xl md:text-2xl lg:text-3xl; }
+  h4 { @apply text-lg md:text-xl lg:text-2xl; }
+  h5 { @apply text-base md:text-lg lg:text-xl; }
+  h6 { @apply text-sm md:text-base lg:text-lg; }
 }
 
 @layer components {
@@ -119,7 +118,19 @@
   }
 
   .page-container {
-    @apply container mx-auto px-4 py-8 md:py-12 min-h-screen flex flex-col;
+    @apply container mx-auto px-3 sm:px-4 py-6 sm:py-8 md:py-12 min-h-screen flex flex-col;
+  }
+
+  .mobile-touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  .card-mobile {
+    @apply rounded-lg p-3 sm:p-4 md:p-6;
+  }
+
+  .section-mobile {
+    @apply mb-4 sm:mb-6 md:mb-8;
   }
 
   .fade-in-section {
@@ -153,6 +164,24 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-green/30;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 640px) {
+  .touch-scroll {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  
+  .touch-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .mobile-safe-area {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    padding-top: env(safe-area-inset-top, 0);
+  }
 }
 
 /* Custom font */
