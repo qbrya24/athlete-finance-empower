@@ -1,152 +1,207 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import AppLayout from '@/components/layout/AppLayout';
-import FadeIn from '@/components/animations/FadeIn';
-import { Wallet, PiggyBank, BarChart2, Link, Calculator, Receipt, Award, Book, Newspaper as NewspaperIcon } from 'lucide-react';
 
-import TabNavigation, { TabItem } from '@/components/financial-tools/TabNavigation';
+import React, { useState } from 'react';
+import AppLayout from '@/components/layout/AppLayout';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import FinancialSummary from '@/components/financial-tools/FinancialSummary';
 import RecentTransactions from '@/components/financial-tools/RecentTransactions';
+import TabNavigation from '@/components/financial-tools/TabNavigation';
 import ToolCards from '@/components/financial-tools/ToolCards';
 import AffordabilityCalculator from '@/components/financial-tools/affordability/AffordabilityCalculator';
 import TaxHelp from '@/components/financial-tools/taxes/TaxHelp';
 import RewardsProgram from '@/components/financial-tools/rewards/RewardsProgram';
 import ComingSoonTab from '@/components/financial-tools/ComingSoonTab';
 
+type TransactionType = "expense" | "income";
+
+interface Transaction {
+  id: number;
+  type: TransactionType;
+  amount: number;
+  category: string;
+  date: string;
+  description: string;
+}
+
 const FinancialTools = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const tabParam = params.get('tab');
-    if (tabParam) {
-      setActiveTab(tabParam);
-    }
-  }, [location.search]);
-
+  // Sample data for financial summary
   const financialData = {
-    overview: {
-      cashOnHand: 3200,
-      emergencyFund: {
-        current: 5000,
-        goal: 15000,
-        percentage: 33,
-      },
-      investments: {
-        total: 12500,
-        change: 5.2,
-      },
-      netWorth: 20700,
-    },
-    recentTransactions: [
-      {
-        id: 1,
-        type: 'expense',
-        amount: 125.00,
-        category: 'Dining',
-        date: '2023-06-10',
-        description: 'Restaurant dinner',
-      },
-      {
-        id: 2,
-        type: 'income',
-        amount: 1500.00,
-        category: 'NIL Deal',
-        date: '2023-06-08',
-        description: 'Social media promotion',
-      },
-      {
-        id: 3,
-        type: 'expense',
-        amount: 75.50,
-        category: 'Transportation',
-        date: '2023-06-05',
-        description: 'Uber rides',
-      },
-      {
-        id: 4,
-        type: 'expense',
-        amount: 200.00,
-        category: 'Entertainment',
-        date: '2023-06-03',
-        description: 'Concert tickets',
-      },
-      {
-        id: 5,
-        type: 'income',
-        amount: 750.00,
-        category: 'Stipend',
-        date: '2023-06-01',
-        description: 'Monthly athletic stipend',
-      },
-    ],
+    balance: 54750,
+    income: 12000,
+    expenses: 3250,
+    savings: 8750,
+    savingsGoal: 15000,
+    investmentValue: 42000,
+    investmentChange: 2.4,
+    creditScore: 780,
   };
 
-  const tabs: TabItem[] = [
-    { id: 'overview', label: 'Overview', icon: <BarChart2 className="w-4 h-4" /> },
-    { id: 'budget', label: 'Budget', icon: <Wallet className="w-4 h-4" /> },
-    { id: 'goals', label: 'Goals', icon: <PiggyBank className="w-4 h-4" /> },
-    { id: 'calculator', label: 'Afford This?', icon: <Calculator className="w-4 h-4" /> },
-    { id: 'taxes', label: 'Tax Help', icon: <Receipt className="w-4 h-4" /> },
-    { id: 'rewards', label: 'Rewards', icon: <Award className="w-4 h-4" /> },
-    { id: 'accounts', label: 'Link Accounts', icon: <Link className="w-4 h-4" /> },
+  // Sample data for recent transactions
+  const recentTransactions: Transaction[] = [
+    {
+      id: 1,
+      type: "expense",
+      amount: 320,
+      category: "Housing",
+      date: "2023-06-10",
+      description: "Rent payment"
+    },
+    {
+      id: 2,
+      type: "expense",
+      amount: 145.50,
+      category: "Utilities",
+      date: "2023-06-08",
+      description: "Electricity bill"
+    },
+    {
+      id: 3,
+      type: "income",
+      amount: 4200,
+      category: "Salary",
+      date: "2023-06-01",
+      description: "Monthly salary"
+    },
+    {
+      id: 4,
+      type: "expense",
+      amount: 65.75,
+      category: "Groceries",
+      date: "2023-05-28",
+      description: "Weekly groceries"
+    },
+    {
+      id: 5,
+      type: "expense",
+      amount: 120,
+      category: "Entertainment",
+      date: "2023-05-26",
+      description: "Concert tickets"
+    }
   ];
 
-  const handleTabChange = (tabId: string) => {
-    setActiveTab(tabId);
-    navigate(`/financial-tools?tab=${tabId}`);
-  };
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'overview':
-        return (
-          <>
-            <FinancialSummary financialData={financialData} />
-            <RecentTransactions transactions={financialData.recentTransactions} />
-            <ToolCards onCardClick={handleTabChange} />
-          </>
-        );
-      case 'calculator':
-        return <AffordabilityCalculator />;
-      case 'taxes':
-        return <TaxHelp />;
-      case 'rewards':
-        return <RewardsProgram />;
-      case 'budget':
-      case 'goals':
-      case 'accounts':
-        const tab = tabs.find(t => t.id === activeTab);
-        return tab ? <ComingSoonTab title={tab.label} icon={tab.icon} /> : null;
-      default:
-        return null;
+  // Financial tool cards data
+  const toolCards = [
+    {
+      id: 1,
+      title: "Can You Afford This?",
+      description: "Calculate if a purchase fits your budget",
+      icon: "calculator",
+      tabId: "affordability"
+    },
+    {
+      id: 2,
+      title: "Tax Help",
+      description: "Understand your tax situation and optimize returns",
+      icon: "receipt",
+      tabId: "taxes"
+    },
+    {
+      id: 3,
+      title: "Rewards Program",
+      description: "Earn rewards for smart financial decisions",
+      icon: "trophy",
+      tabId: "rewards"
+    },
+    {
+      id: 4,
+      title: "Budget Planner",
+      description: "Create and manage your monthly budget",
+      icon: "piggyBank",
+      tabId: "budgetPlanner"
+    },
+    {
+      id: 5,
+      title: "Investment Tracker",
+      description: "Monitor your investment portfolio",
+      icon: "lineChart",
+      tabId: "investments"
+    },
+    {
+      id: 6,
+      title: "Retirement Calculator",
+      description: "Plan for your retirement goals",
+      icon: "calendar",
+      tabId: "retirement"
     }
-  };
+  ];
 
   return (
     <AppLayout>
       <div className="page-container">
-        <FadeIn className="mb-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
-            <div>
-              <span className="inline-block px-3 py-1 bg-cream text-green rounded-full text-xs font-medium mb-2">
-                Financial Tools
-              </span>
-              <h1 className="text-3xl md:text-4xl font-semibold">Financial Dashboard</h1>
-              <p className="text-cream/80 mt-2">Track, manage, and plan your finances</p>
-            </div>
-          </div>
-        </FadeIn>
+        <h1 className="text-2xl font-semibold mb-6 text-cream">Financial Tools</h1>
+        
+        <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
+        
+        <Tabs value={activeTab} className="w-full mt-4">
+          {/* Overview Tab */}
+          <TabsContent value="overview" className="mt-0 space-y-6">
+            <FinancialSummary data={financialData} />
+            <RecentTransactions transactions={recentTransactions} />
+            <ToolCards cards={toolCards} setActiveTab={setActiveTab} />
+          </TabsContent>
 
-        <TabNavigation 
-          tabs={tabs} 
-          activeTab={activeTab} 
-          onTabChange={handleTabChange} 
-        />
+          {/* Affordability Calculator Tab */}
+          <TabsContent value="affordability" className="mt-0">
+            <AffordabilityCalculator />
+          </TabsContent>
 
-        {renderTabContent()}
+          {/* Tax Help Tab */}
+          <TabsContent value="taxes" className="mt-0">
+            <TaxHelp />
+          </TabsContent>
+
+          {/* Rewards Program Tab */}
+          <TabsContent value="rewards" className="mt-0">
+            <RewardsProgram />
+          </TabsContent>
+
+          {/* Budget Planner Tab (Coming Soon) */}
+          <TabsContent value="budgetPlanner" className="mt-0">
+            <ComingSoonTab 
+              title="Budget Planner" 
+              description="Create and track your monthly budget, set spending limits by category, and receive alerts when you're approaching your limits." 
+              comingSoonDate="July 2023" 
+              features={[
+                "Visual breakdown of spending by category",
+                "Custom budget templates based on income",
+                "Bill payment reminders",
+                "Expense trend analysis"
+              ]}
+            />
+          </TabsContent>
+
+          {/* Investments Tab (Coming Soon) */}
+          <TabsContent value="investments" className="mt-0">
+            <ComingSoonTab 
+              title="Investment Tracker" 
+              description="Monitor your investment portfolio, track performance, and receive personalized investment recommendations." 
+              comingSoonDate="August 2023" 
+              features={[
+                "Real-time portfolio valuation",
+                "Performance comparison to market indices",
+                "Diversification analysis",
+                "Risk assessment tools"
+              ]}
+            />
+          </TabsContent>
+
+          {/* Retirement Tab (Coming Soon) */}
+          <TabsContent value="retirement" className="mt-0">
+            <ComingSoonTab 
+              title="Retirement Calculator" 
+              description="Plan for your retirement by estimating your future needs, setting goals, and tracking your progress." 
+              comingSoonDate="September 2023" 
+              features={[
+                "Retirement age estimator",
+                "Social security benefit calculator",
+                "Required savings projections",
+                "Inflation impact analysis"
+              ]}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
     </AppLayout>
   );
