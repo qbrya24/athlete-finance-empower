@@ -1,7 +1,6 @@
-
 import React, { ReactNode, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, BookOpen, BarChart3, Newspaper, Menu, X } from 'lucide-react';
+import { Home, Book, BarChart3, Newspaper as NewspaperIcon, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '@/components/ui/Logo';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -20,16 +19,15 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const [menuOpen, setMenuOpen] = useState(false);
   const isMobile = useIsMobile();
   
-  // Close menu when route changes
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
 
   const navigation = [
     { name: 'Home', path: '/dashboard', icon: <Home className="w-5 h-5" /> },
-    { name: 'Education', path: '/education', icon: <BookOpen className="w-5 h-5" /> },
+    { name: 'Education', path: '/education', icon: <Book className="w-5 h-5" /> },
     { name: 'Financial Tools', path: '/financial-tools', icon: <BarChart3 className="w-5 h-5" /> },
-    { name: 'News', path: '/news', icon: <Newspaper className="w-5 h-5" /> },
+    { name: 'News', path: '/news', icon: <NewspaperIcon className="w-5 h-5" /> },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -46,7 +44,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
   return (
     <div className="min-h-screen bg-cream">
-      {/* Top Navigation Bar */}
       <header className="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-green/10 px-3 sm:px-4 py-3">
         <div className="container mx-auto flex justify-between items-center">
           <Logo size="sm" variant={isMobile ? "icon" : "full"} />
@@ -82,7 +79,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         </div>
       </header>
 
-      {/* Mobile Menu */}
       <div 
         className={cn(
           "fixed inset-0 z-30 bg-black/50 md:hidden transition-opacity backdrop-blur-sm",
@@ -121,7 +117,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         </div>
       </nav>
 
-      {/* Mobile Bottom Navigation */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-green/10 shadow-lg flex justify-around items-center">
         {navigation.map((item) => (
           <button
@@ -140,7 +135,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         ))}
       </div>
 
-      {/* Main Content */}
       <main className="pt-[61px] pb-[72px] md:pb-0 min-h-screen">
         {children}
       </main>

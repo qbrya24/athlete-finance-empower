@@ -1,7 +1,7 @@
 
 import React from 'react';
 import FadeIn from '@/components/animations/FadeIn';
-import { Award, PiggyBank, BarChart2, BookOpen } from 'lucide-react';
+import { Award, PiggyBank, BarChart2, Book } from 'lucide-react';
 
 const RewardsProgram: React.FC = () => {
   return (
@@ -27,7 +27,7 @@ const RewardsProgram: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div className="flex items-start">
             <div className="w-10 h-10 rounded-full bg-gold/30 flex items-center justify-center mr-3 mt-1">
-              <BookOpen className="w-5 h-5 text-gold" />
+              <Book className="w-5 h-5 text-gold" />
             </div>
             <div>
               <h4 className="font-medium mb-1">Complete Education Modules</h4>
@@ -57,7 +57,7 @@ const RewardsProgram: React.FC = () => {
           
           <div className="flex items-start">
             <div className="w-10 h-10 rounded-full bg-gold/30 flex items-center justify-center mr-3 mt-1">
-              <BookOpen className="w-5 h-5 text-gold" />
+              <Book className="w-5 h-5 text-gold" />
             </div>
             <div>
               <h4 className="font-medium mb-1">Read Financial News</h4>

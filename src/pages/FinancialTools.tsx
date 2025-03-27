@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AppLayout from '@/components/layout/AppLayout';
 import FadeIn from '@/components/animations/FadeIn';
-import { Wallet, PiggyBank, BarChart2, Link, Calculator, Receipt, Award } from 'lucide-react';
+import { Wallet, PiggyBank, BarChart2, Link, Calculator, Receipt, Award, Book, Newspaper as NewspaperIcon } from 'lucide-react';
 
 import TabNavigation, { TabItem } from '@/components/financial-tools/TabNavigation';
 import FinancialSummary from '@/components/financial-tools/FinancialSummary';
@@ -19,7 +18,6 @@ const FinancialTools = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Check if we have a tab parameter in the URL
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const tabParam = params.get('tab');
@@ -142,14 +140,12 @@ const FinancialTools = () => {
           </div>
         </FadeIn>
 
-        {/* Tabs */}
         <TabNavigation 
           tabs={tabs} 
           activeTab={activeTab} 
           onTabChange={handleTabChange} 
         />
 
-        {/* Tab Content */}
         {renderTabContent()}
       </div>
     </AppLayout>
