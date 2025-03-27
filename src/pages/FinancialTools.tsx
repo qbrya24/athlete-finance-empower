@@ -10,6 +10,7 @@ import AffordabilityCalculator from '@/components/financial-tools/affordability/
 import TaxHelp from '@/components/financial-tools/taxes/TaxHelp';
 import RewardsProgram from '@/components/financial-tools/rewards/RewardsProgram';
 import ComingSoonTab from '@/components/financial-tools/ComingSoonTab';
+import { Wallet, PiggyBank, Receipt, BarChart2, Calculator, Calendar, Book } from 'lucide-react';
 
 type TransactionType = "expense" | "income";
 
@@ -87,59 +88,74 @@ const FinancialTools = () => {
       id: 1,
       title: "Can You Afford This?",
       description: "Calculate if a purchase fits your budget",
-      icon: "calculator",
+      icon: <Calculator size={24} />,
       tabId: "affordability"
     },
     {
       id: 2,
       title: "Tax Help",
       description: "Understand your tax situation and optimize returns",
-      icon: "receipt",
+      icon: <Receipt size={24} />,
       tabId: "taxes"
     },
     {
       id: 3,
       title: "Rewards Program",
       description: "Earn rewards for smart financial decisions",
-      icon: "trophy",
+      icon: <PiggyBank size={24} />,
       tabId: "rewards"
     },
     {
       id: 4,
       title: "Budget Planner",
       description: "Create and manage your monthly budget",
-      icon: "piggyBank",
+      icon: <Wallet size={24} />,
       tabId: "budgetPlanner"
     },
     {
       id: 5,
       title: "Investment Tracker",
       description: "Monitor your investment portfolio",
-      icon: "lineChart",
+      icon: <BarChart2 size={24} />,
       tabId: "investments"
     },
     {
       id: 6,
       title: "Retirement Calculator",
       description: "Plan for your retirement goals",
-      icon: "calendar",
+      icon: <Calendar size={24} />,
       tabId: "retirement"
     }
   ];
+  
+  // Tabs configuration
+  const tabs = [
+    { id: "overview", label: "Overview", icon: <BarChart2 size={16} /> },
+    { id: "affordability", label: "Affordability", icon: <Calculator size={16} /> },
+    { id: "taxes", label: "Taxes", icon: <Receipt size={16} /> },
+    { id: "rewards", label: "Rewards", icon: <PiggyBank size={16} /> },
+    { id: "budgetPlanner", label: "Budget", icon: <Wallet size={16} /> },
+    { id: "investments", label: "Investments", icon: <BarChart2 size={16} /> },
+    { id: "retirement", label: "Retirement", icon: <Calendar size={16} /> }
+  ];
+
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+  };
 
   return (
     <AppLayout>
       <div className="page-container">
         <h1 className="text-2xl font-semibold mb-6 text-cream">Financial Tools</h1>
         
-        <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
+        <TabNavigation activeTab={activeTab} onTabChange={handleTabChange} tabs={tabs} />
         
         <Tabs value={activeTab} className="w-full mt-4">
           {/* Overview Tab */}
           <TabsContent value="overview" className="mt-0 space-y-6">
             <FinancialSummary data={financialData} />
             <RecentTransactions transactions={recentTransactions} />
-            <ToolCards cards={toolCards} setActiveTab={setActiveTab} />
+            <ToolCards onCardClick={handleTabChange} cards={toolCards} />
           </TabsContent>
 
           {/* Affordability Calculator Tab */}
@@ -161,6 +177,7 @@ const FinancialTools = () => {
           <TabsContent value="budgetPlanner" className="mt-0">
             <ComingSoonTab 
               title="Budget Planner" 
+              icon={<Wallet size={24} />}
               description="Create and track your monthly budget, set spending limits by category, and receive alerts when you're approaching your limits." 
               comingSoonDate="July 2023" 
               features={[
@@ -176,6 +193,7 @@ const FinancialTools = () => {
           <TabsContent value="investments" className="mt-0">
             <ComingSoonTab 
               title="Investment Tracker" 
+              icon={<BarChart2 size={24} />}
               description="Monitor your investment portfolio, track performance, and receive personalized investment recommendations." 
               comingSoonDate="August 2023" 
               features={[
@@ -191,6 +209,7 @@ const FinancialTools = () => {
           <TabsContent value="retirement" className="mt-0">
             <ComingSoonTab 
               title="Retirement Calculator" 
+              icon={<Calendar size={24} />}
               description="Plan for your retirement by estimating your future needs, setting goals, and tracking your progress." 
               comingSoonDate="September 2023" 
               features={[

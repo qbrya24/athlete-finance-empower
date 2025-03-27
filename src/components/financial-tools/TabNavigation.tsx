@@ -10,16 +10,16 @@ export interface TabItem {
 }
 
 interface TabNavigationProps {
-  tabs: TabItem[];
   activeTab: string;
   onTabChange: (tabId: string) => void;
+  tabs?: TabItem[];
 }
 
 const TabNavigation: React.FC<TabNavigationProps> = ({ tabs, activeTab, onTabChange }) => {
   return (
     <FadeIn delay={100}>
       <div className="flex overflow-x-auto touch-scroll pb-2 mb-6 gap-2">
-        {tabs.map((tab) => (
+        {tabs?.map((tab) => (
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}

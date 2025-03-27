@@ -26,10 +26,11 @@ const ToolCard: React.FC<ToolCardProps> = ({ title, description, icon, color, on
 
 interface ToolCardsProps {
   onCardClick: (tab: string) => void;
+  cards?: any[];
 }
 
-const ToolCards: React.FC<ToolCardsProps> = ({ onCardClick }) => {
-  const toolCards = [
+const ToolCards: React.FC<ToolCardsProps> = ({ onCardClick, cards }) => {
+  const defaultToolCards = [
     {
       title: 'Budget Planner',
       description: 'Create and manage your monthly budget',
@@ -74,6 +75,8 @@ const ToolCards: React.FC<ToolCardsProps> = ({ onCardClick }) => {
     },
   ];
 
+  const toolCardsToRender = cards || defaultToolCards;
+
   return (
     <div className="mb-8">
       <FadeIn delay={400}>
@@ -81,7 +84,7 @@ const ToolCards: React.FC<ToolCardsProps> = ({ onCardClick }) => {
       </FadeIn>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {toolCards.map((tool, index) => (
+        {toolCardsToRender.map((tool, index) => (
           <FadeIn key={tool.title} delay={500 + index * 50}>
             <ToolCard
               title={tool.title}
