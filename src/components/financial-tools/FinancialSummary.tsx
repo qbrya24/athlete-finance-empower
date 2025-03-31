@@ -1,5 +1,8 @@
+
 import React from 'react';
 import FadeIn from '@/components/animations/FadeIn';
+import SpendingCategoriesGraph, { SpendingCategory } from './SpendingCategoriesGraph';
+import { Home, ShoppingBag, Utensils, Car, Plane, HeartPulse, Smartphone, GraduationCap } from 'lucide-react';
 
 interface FinancialData {
   balance: number;
@@ -10,6 +13,7 @@ interface FinancialData {
   investmentValue: number;
   investmentChange: number;
   creditScore: number;
+  spendingCategories?: SpendingCategory[];
 }
 
 interface FinancialSummaryProps {
@@ -28,17 +32,76 @@ interface FinancialSummaryProps {
       };
       netWorth: number;
     };
+    spendingCategories?: SpendingCategory[];
   };
 }
 
+// Default spending categories data
+const defaultSpendingCategories: SpendingCategory[] = [
+  {
+    id: "housing",
+    name: "Housing",
+    icon: <Home size={20} className="text-cream" />,
+    spent: 1850,
+    budget: 2000,
+    color: "bg-green-300/80"
+  },
+  {
+    id: "food",
+    name: "Food & Dining",
+    icon: <Utensils size={20} className="text-cream" />,
+    spent: 720,
+    budget: 600,
+    color: "bg-gold/80"
+  },
+  {
+    id: "shopping",
+    name: "Shopping",
+    icon: <ShoppingBag size={20} className="text-cream" />,
+    spent: 430,
+    budget: 400,
+    color: "bg-blue-400/80"
+  },
+  {
+    id: "transportation",
+    name: "Transportation",
+    icon: <Car size={20} className="text-cream" />,
+    spent: 340,
+    budget: 350,
+    color: "bg-purple-400/80"
+  },
+  {
+    id: "health",
+    name: "Healthcare",
+    icon: <HeartPulse size={20} className="text-cream" />,
+    spent: 190,
+    budget: 250,
+    color: "bg-pink-400/80"
+  },
+  {
+    id: "technology",
+    name: "Technology",
+    icon: <Smartphone size={20} className="text-cream" />,
+    spent: 260,
+    budget: 200,
+    color: "bg-cyan-400/80"
+  }
+];
+
 const FinancialSummary: React.FC<FinancialSummaryProps> = ({ data, financialData }) => {
+  // Use spending categories from props or default to the sample data
+  const spendingCategories = 
+    data?.spendingCategories || 
+    financialData?.spendingCategories || 
+    defaultSpendingCategories;
+
   if (financialData) {
     return (
       <FadeIn delay={200} className="mb-8">
         <div className="bg-green rounded-xl p-6 shadow-sm border border-cream/10 text-cream">
           <h2 className="text-xl font-semibold mb-6">Financial Summary</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div className="flex flex-col">
               <span className="text-sm text-cream/70 mb-1">Cash on Hand</span>
               <span className="text-2xl font-semibold">${financialData.overview.cashOnHand.toLocaleString()}</span>
@@ -74,6 +137,8 @@ const FinancialSummary: React.FC<FinancialSummaryProps> = ({ data, financialData
               <span className="text-xs text-cream/70 mt-1">Total assets - liabilities</span>
             </div>
           </div>
+          
+          <SpendingCategoriesGraph categories={spendingCategories} />
         </div>
       </FadeIn>
     );
@@ -84,7 +149,7 @@ const FinancialSummary: React.FC<FinancialSummaryProps> = ({ data, financialData
       <div className="bg-green rounded-xl p-6 shadow-sm border border-cream/10 text-cream">
         <h2 className="text-xl font-semibold mb-6">Financial Summary</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="flex flex-col">
             <span className="text-sm text-cream/70 mb-1">Balance</span>
             <span className="text-2xl font-semibold">${data?.balance.toLocaleString()}</span>
@@ -135,6 +200,8 @@ const FinancialSummary: React.FC<FinancialSummaryProps> = ({ data, financialData
             </div>
           </div>
         </div>
+        
+        <SpendingCategoriesGraph categories={spendingCategories} />
       </div>
     </FadeIn>
   );
