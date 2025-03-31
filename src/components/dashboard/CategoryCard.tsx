@@ -39,11 +39,11 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
           className
         )}
       >
-        <div className="mb-4 p-3 rounded-full bg-green-50 text-green flex items-center justify-center">
+        <div className="mb-3 p-3 rounded-full bg-green-50 text-green flex items-center justify-center">
           {icon}
         </div>
-        <h3 className="text-lg sm:text-xl font-semibold mb-2">{title}</h3>
-        <p className="text-sm text-green/70">{description}</p>
+        <h3 className="text-base sm:text-lg font-semibold mb-1">{title}</h3>
+        <p className="text-xs sm:text-sm text-green/70">{description}</p>
       </button>
     </FadeIn>
   );

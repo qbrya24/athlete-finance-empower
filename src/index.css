@@ -84,9 +84,7 @@
     --sidebar-border: 120 30% 15%;
     --sidebar-ring: 43 60% 40%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
@@ -94,11 +92,7 @@
   body {
     @apply bg-cream text-green font-inter antialiased;
     min-height: 100vh;
-    min-height: -webkit-fill-available;
-  }
-  
-  html {
-    height: -webkit-fill-available;
+    overflow-x: hidden;
   }
 
   /* Typography */
@@ -106,12 +100,12 @@
     @apply font-medium tracking-tight;
   }
 
-  h1 { @apply text-3xl md:text-4xl lg:text-5xl xl:text-6xl; }
-  h2 { @apply text-2xl md:text-3xl lg:text-4xl xl:text-5xl; }
-  h3 { @apply text-xl md:text-2xl lg:text-3xl; }
-  h4 { @apply text-lg md:text-xl lg:text-2xl; }
-  h5 { @apply text-base md:text-lg lg:text-xl; }
-  h6 { @apply text-sm md:text-base lg:text-lg; }
+  h1 { @apply text-2xl md:text-3xl lg:text-4xl; }
+  h2 { @apply text-xl md:text-2xl lg:text-3xl; }
+  h3 { @apply text-lg md:text-xl lg:text-2xl; }
+  h4 { @apply text-base md:text-lg lg:text-xl; }
+  h5 { @apply text-sm md:text-base lg:text-lg; }
+  h6 { @apply text-xs md:text-sm lg:text-base; }
 }
 
 @layer components {
@@ -124,7 +118,8 @@
   }
 
   .page-container {
-    @apply container mx-auto px-3 sm:px-4 py-6 sm:py-8 md:py-12 min-h-screen flex flex-col;
+    @apply container mx-auto px-3 sm:px-4 py-4 sm:py-6 flex flex-col;
+    min-height: calc(100vh - 133px); /* Account for header and mobile nav */
   }
 
   .mobile-touch-target {
@@ -132,11 +127,11 @@
   }
 
   .card-mobile {
-    @apply rounded-lg p-3 sm:p-4 md:p-6;
+    @apply rounded-lg p-3 sm:p-4;
   }
 
   .section-mobile {
-    @apply mb-4 sm:mb-6 md:mb-8;
+    @apply mb-4 sm:mb-6;
   }
 
   .fade-in-section {
@@ -146,23 +141,11 @@
   .fade-in-section.is-visible {
     @apply opacity-100 translate-y-0;
   }
-
-  .iphone-container {
-    @apply w-full max-w-md mx-auto aspect-[16/9] overflow-hidden;
-  }
-  
-  .iphone-card {
-    @apply rounded-lg p-3 max-h-[90vh] overflow-y-auto;
-  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
-  }
-
-  .aspect-16-9 {
-    aspect-ratio: 16/9;
   }
 
   .safe-area-inset-top {
@@ -176,8 +159,8 @@
 
 /* Disable default scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -211,15 +194,10 @@
   
   .page-container {
     @apply pb-16;
-    height: 100vh;
-    height: -webkit-fill-available;
-    max-height: -webkit-fill-available;
   }
 
   .scale-content {
-    transform-origin: top center;
     height: auto;
-    max-height: 100%;
     width: 100%;
   }
 }
@@ -233,6 +211,7 @@
   src: url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 }
 
+/* iPhone notch support */
 @media screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3),
        screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3),
        screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2),
@@ -241,11 +220,5 @@
   .iphone-notch-padding {
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
-  }
-}
-
-@supports (-webkit-touch-callout: none) {
-  .min-h-screen {
-    min-height: -webkit-fill-available;
   }
 }

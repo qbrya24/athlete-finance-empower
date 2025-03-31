@@ -24,23 +24,18 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     setMenuOpen(false);
   }, [location.pathname]);
 
-  // Add meta viewport tag for proper iPhone scaling
+  // Add meta viewport tag for proper scaling
   useEffect(() => {
     const metaViewport = document.querySelector('meta[name="viewport"]');
     if (metaViewport) {
-      metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no');
+      metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0');
     }
     
-    // Force 16:9 aspect ratio on mobile
+    // Remove any aspect ratio constraints
     const handleResize = () => {
       if (isMobile) {
-        const vh = window.innerHeight;
-        const vw = window.innerWidth;
-        const idealHeight = vw * (9/16);
-        
-        document.documentElement.style.setProperty('--app-height', `${vh}px`);
-        document.documentElement.style.setProperty('--app-width', `${vw}px`);
-        document.documentElement.style.setProperty('--ideal-height', `${idealHeight}px`);
+        document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
+        document.documentElement.style.setProperty('--app-width', `${window.innerWidth}px`);
       }
     };
     
@@ -162,8 +157,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         ))}
       </div>
 
-      <main className="pt-[61px] pb-[72px] md:pb-0 min-h-screen scale-content">
-        <div className="iphone-container aspect-16-9">
+      <main className="pt-[61px] pb-[72px] md:pb-0 min-h-screen">
+        <div className="container mx-auto px-3 sm:px-4 py-4 overflow-auto">
           {children}
         </div>
       </main>
