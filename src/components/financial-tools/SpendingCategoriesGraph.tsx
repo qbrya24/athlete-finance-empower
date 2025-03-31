@@ -74,7 +74,7 @@ const SpendingCategoriesGraph: React.FC<SpendingCategoriesGraphProps> = ({
                   <div 
                     className={cn(
                       "h-full rounded-full transition-all duration-500 ease-out",
-                      isOverBudget ? "bg-red-400" : category.color
+                      isOverBudget ? "bg-red-400" : "bg-white" /* Changed from category.color to bg-white */
                     )}
                     style={{ width: `${percentage}%` }}
                   />
