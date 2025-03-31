@@ -1,0 +1,35 @@
+
+@layer components {
+  .glass-card {
+    @apply bg-green/90 backdrop-blur-sm border border-white/20 shadow-lg text-cream;
+  }
+
+  .button-hover {
+    @apply transition-transform duration-300 hover:scale-[1.03] active:scale-[0.97];
+  }
+
+  .page-container {
+    @apply container mx-auto px-3 sm:px-4 py-4 sm:py-6 flex flex-col;
+    min-height: calc(100vh - 133px); /* Account for header and mobile nav */
+  }
+
+  .mobile-touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  .card-mobile {
+    @apply rounded-lg p-3 sm:p-4;
+  }
+
+  .section-mobile {
+    @apply mb-4 sm:mb-6;
+  }
+
+  .fade-in-section {
+    @apply opacity-0 translate-y-4 transition-all duration-700 ease-out;
+  }
+
+  .fade-in-section.is-visible {
+    @apply opacity-100 translate-y-0;
+  }
+}
