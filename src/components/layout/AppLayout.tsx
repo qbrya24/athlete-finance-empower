@@ -1,3 +1,4 @@
+
 import React, { ReactNode, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, Book, BarChart3, Newspaper as NewspaperIcon, Menu, X } from 'lucide-react';
@@ -23,6 +24,32 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     setMenuOpen(false);
   }, [location.pathname]);
 
+  // Add meta viewport tag for proper iPhone scaling
+  useEffect(() => {
+    const metaViewport = document.querySelector('meta[name="viewport"]');
+    if (metaViewport) {
+      metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no');
+    }
+    
+    // Force 16:9 aspect ratio on mobile
+    const handleResize = () => {
+      if (isMobile) {
+        const vh = window.innerHeight;
+        const vw = window.innerWidth;
+        const idealHeight = vw * (9/16);
+        
+        document.documentElement.style.setProperty('--app-height', `${vh}px`);
+        document.documentElement.style.setProperty('--app-width', `${vw}px`);
+        document.documentElement.style.setProperty('--ideal-height', `${idealHeight}px`);
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isMobile]);
+
   const navigation = [
     { name: 'Home', path: '/dashboard', icon: <Home className="w-5 h-5" /> },
     { name: 'Education', path: '/education', icon: <Book className="w-5 h-5" /> },
@@ -36,7 +63,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
   if (!withNavigation) {
     return (
-      <main className="min-h-screen bg-cream mobile-safe-area">
+      <main className="min-h-screen bg-cream mobile-safe-area safe-area-inset-top safe-area-inset-bottom">
         {children}
       </main>
     );
@@ -44,7 +71,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
   return (
     <div className="min-h-screen bg-cream">
-      <header className="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-green/10 px-3 sm:px-4 py-3">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-green/10 px-3 sm:px-4 py-3 safe-area-inset-top">
         <div className="container mx-auto flex justify-between items-center">
           <Logo size="sm" variant={isMobile ? "icon" : "full"} />
           
@@ -117,7 +144,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         </div>
       </nav>
 
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-green/10 shadow-lg flex justify-around items-center">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-green/10 shadow-lg flex justify-around items-center safe-area-inset-bottom">
         {navigation.map((item) => (
           <button
             key={item.name}
@@ -135,8 +162,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         ))}
       </div>
 
-      <main className="pt-[61px] pb-[72px] md:pb-0 min-h-screen">
-        {children}
+      <main className="pt-[61px] pb-[72px] md:pb-0 min-h-screen scale-content">
+        <div className="iphone-container aspect-16-9">
+          {children}
+        </div>
       </main>
     </div>
   );
