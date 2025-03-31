@@ -79,7 +79,7 @@ const Onboarding = () => {
     <AppLayout withNavigation={false}>
       <div className="min-h-screen bg-cream flex flex-col">
         {/* Header */}
-        <header className="py-6 px-4 border-b border-green/5">
+        <header className="py-4 px-4 border-b border-green/5">
           <div className="container max-w-4xl mx-auto flex items-center justify-between">
             <Logo size="sm" />
             <div className="text-sm text-green/70">
@@ -90,14 +90,14 @@ const Onboarding = () => {
           </div>
         </header>
         
-        <main className="flex-1 container max-w-4xl mx-auto px-4 py-12">
+        <main className="flex-1 container max-w-4xl mx-auto px-4 py-6 overflow-y-auto">
           {currentStep === 0 && (
             <FadeIn>
               <div className="max-w-2xl mx-auto">
-                <h2 className="text-3xl font-semibold mb-2">Welcome to Final Whistle Wealth</h2>
-                <p className="text-green/70 mb-8">Let's start by getting to know you better</p>
+                <h2 className="text-2xl md:text-3xl font-semibold mb-2">Welcome to Final Whistle Wealth</h2>
+                <p className="text-green/70 mb-6">Let's start by getting to know you better</p>
                 
-                <div className="space-y-6">
+                <div className="space-y-4 md:space-y-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-green mb-1">
                       Full Name
@@ -109,7 +109,7 @@ const Onboarding = () => {
                       value={formData.name}
                       onChange={handleInputChange}
                       className={`
-                        w-full px-4 py-3 rounded-lg border bg-white
+                        w-full px-4 py-2 md:py-3 rounded-lg border bg-white
                         focus:outline-none focus:ring-2 focus:ring-green/30
                         transition-all duration-200
                         ${errors.name ? 'border-red-500' : 'border-gray-200'}
@@ -132,7 +132,7 @@ const Onboarding = () => {
                       value={formData.email}
                       onChange={handleInputChange}
                       className={`
-                        w-full px-4 py-3 rounded-lg border bg-white
+                        w-full px-4 py-2 md:py-3 rounded-lg border bg-white
                         focus:outline-none focus:ring-2 focus:ring-green/30
                         transition-all duration-200
                         ${errors.email ? 'border-red-500' : 'border-gray-200'}
@@ -155,7 +155,7 @@ const Onboarding = () => {
                       value={formData.phone}
                       onChange={handleInputChange}
                       className={`
-                        w-full px-4 py-3 rounded-lg border bg-white
+                        w-full px-4 py-2 md:py-3 rounded-lg border bg-white
                         focus:outline-none focus:ring-2 focus:ring-green/30
                         transition-all duration-200
                         ${errors.phone ? 'border-red-500' : 'border-gray-200'}
@@ -174,10 +174,9 @@ const Onboarding = () => {
           {currentStep === 1 && (
             <FadeIn>
               <div className="max-w-2xl mx-auto">
-                <h2 className="text-3xl font-semibold mb-2">Understand Your Financial Mindset</h2>
-                <p className="text-green/70 mb-8">
-                  Answer these questions to help us personalize your financial education journey. 
-                  There are no right or wrong answers.
+                <h2 className="text-2xl md:text-3xl font-semibold mb-2">Financial Knowledge & Mindset</h2>
+                <p className="text-green/70 mb-6">
+                  Complete this assessment to determine your financial profile and knowledge level.
                 </p>
                 
                 <QuestionnaireForm />
@@ -188,22 +187,22 @@ const Onboarding = () => {
         
         {/* Navigation footer (only for first step) */}
         {currentStep === 0 && (
-          <footer className="py-6 px-4 border-t border-green/5 bg-white/50">
+          <footer className="py-4 px-4 border-t border-green/5 bg-white/50 mt-auto">
             <div className="container max-w-4xl mx-auto flex justify-between">
               <button
                 onClick={() => navigate('/')}
-                className="px-4 py-2 text-green/70 hover:text-green transition-colors flex items-center"
+                className="px-3 py-2 text-green/70 hover:text-green transition-colors flex items-center"
               >
-                <ChevronLeft className="w-5 h-5 mr-1" />
+                <ChevronLeft className="w-4 h-4 mr-1" />
                 Back
               </button>
               
               <button
                 onClick={handleNext}
-                className="px-6 py-2 bg-green text-white rounded-lg hover:bg-green-600 transition-colors flex items-center button-hover"
+                className="px-5 py-2 bg-green text-white rounded-lg hover:bg-green-600 transition-colors flex items-center button-hover"
               >
                 Continue
-                <ChevronRight className="w-5 h-5 ml-1" />
+                <ChevronRight className="w-4 h-4 ml-1" />
               </button>
             </div>
           </footer>

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react';
 import FadeIn from '@/components/animations/FadeIn';
+import ResultsScreen from '@/components/onboarding/ResultsScreen';
 
 type QuestionType = 'mindset' | 'knowledge';
 
@@ -157,11 +158,121 @@ const knowledgeQuestions: KnowledgeQuestion[] = [
       { id: "c", text: "Flood insurance", isCorrect: true },
       { id: "d", text: "Life insurance", isCorrect: false }
     ]
+  },
+  {
+    id: 106,
+    text: "What is a credit score primarily based on?",
+    type: 'knowledge',
+    options: [
+      { id: "a", text: "Your annual income", isCorrect: false },
+      { id: "b", text: "Your education level", isCorrect: false },
+      { id: "c", text: "Your payment history and debts", isCorrect: true },
+      { id: "d", text: "Your employment status", isCorrect: false }
+    ]
+  },
+  {
+    id: 107,
+    text: "What is compound interest?",
+    type: 'knowledge',
+    options: [
+      { id: "a", text: "Interest calculated only on the initial principal", isCorrect: false },
+      { id: "b", text: "Interest calculated on both principal and accumulated interest", isCorrect: true },
+      { id: "c", text: "Interest paid only at the end of a loan term", isCorrect: false },
+      { id: "d", text: "Interest charged on late payments", isCorrect: false }
+    ]
+  },
+  {
+    id: 108,
+    text: "What is diversification in investing?",
+    type: 'knowledge',
+    options: [
+      { id: "a", text: "Putting all your money in high-risk investments", isCorrect: false },
+      { id: "b", text: "Investing in only one industry to maximize returns", isCorrect: false },
+      { id: "c", text: "Spreading investments across different asset classes to reduce risk", isCorrect: true },
+      { id: "d", text: "Changing your investment strategy every month", isCorrect: false }
+    ]
+  },
+  {
+    id: 109,
+    text: "What is a budget deficit?",
+    type: 'knowledge',
+    options: [
+      { id: "a", text: "When your expenses exceed your income", isCorrect: true },
+      { id: "b", text: "When your income exceeds your expenses", isCorrect: false },
+      { id: "c", text: "When you have no savings", isCorrect: false },
+      { id: "d", text: "When your investments lose value", isCorrect: false }
+    ]
+  },
+  {
+    id: 110,
+    text: "What is inflation?",
+    type: 'knowledge',
+    options: [
+      { id: "a", text: "A decrease in the general price level of goods and services", isCorrect: false },
+      { id: "b", text: "An increase in the general price level of goods and services", isCorrect: true },
+      { id: "c", text: "The total value of a country's goods and services", isCorrect: false },
+      { id: "d", text: "A government tax on imported goods", isCorrect: false }
+    ]
+  },
+  {
+    id: 111,
+    text: "What is a stock dividend?",
+    type: 'knowledge',
+    options: [
+      { id: "a", text: "The total value of stock you own", isCorrect: false },
+      { id: "b", text: "A portion of a company's profit paid to shareholders", isCorrect: true },
+      { id: "c", text: "The fee paid to buy or sell stocks", isCorrect: false },
+      { id: "d", text: "A loan given to shareholders", isCorrect: false }
+    ]
+  },
+  {
+    id: 112,
+    text: "What is a deductible in insurance?",
+    type: 'knowledge',
+    options: [
+      { id: "a", text: "The monthly payment for insurance coverage", isCorrect: false },
+      { id: "b", text: "The maximum amount an insurance company will pay", isCorrect: false },
+      { id: "c", text: "The amount you must pay before insurance coverage begins", isCorrect: true },
+      { id: "d", text: "A tax benefit for having insurance", isCorrect: false }
+    ]
+  },
+  {
+    id: 113,
+    text: "What does 'being underwater' on a mortgage mean?",
+    type: 'knowledge',
+    options: [
+      { id: "a", text: "Having a low interest rate", isCorrect: false },
+      { id: "b", text: "Falling behind on monthly payments", isCorrect: false },
+      { id: "c", text: "Owning a home near a body of water", isCorrect: false },
+      { id: "d", text: "Owing more on your mortgage than your home is worth", isCorrect: true }
+    ]
+  },
+  {
+    id: 114,
+    text: "What is a bear market?",
+    type: 'knowledge',
+    options: [
+      { id: "a", text: "A market where stock prices are rising", isCorrect: false },
+      { id: "b", text: "A market where stock prices are falling", isCorrect: true },
+      { id: "c", text: "A market that specializes in selling agricultural products", isCorrect: false },
+      { id: "d", text: "A market that specializes in luxury goods", isCorrect: false }
+    ]
+  },
+  {
+    id: 115,
+    text: "What is the difference between a traditional IRA and a Roth IRA?",
+    type: 'knowledge',
+    options: [
+      { id: "a", text: "There is no difference; they are two names for the same thing", isCorrect: false },
+      { id: "b", text: "Traditional IRA contributions are taxed, Roth IRA withdrawals are taxed", isCorrect: false },
+      { id: "c", text: "Traditional IRA contributions are tax-deductible now; Roth IRA withdrawals are tax-free later", isCorrect: true },
+      { id: "d", text: "Only a Roth IRA can be used for retirement savings", isCorrect: false }
+    ]
   }
 ];
 
-// Combine all questions
-const allQuestions = [...mindsetQuestions, ...knowledgeQuestions];
+// Reorder questions - knowledge questions first, then mindset questions
+const allQuestions = [...knowledgeQuestions, ...mindsetQuestions];
 
 const answerOptions: AnswerOption[] = [
   { value: 1, label: "Strongly disagree" },
@@ -171,18 +282,90 @@ const answerOptions: AnswerOption[] = [
   { value: 5, label: "Strongly agree" }
 ];
 
+const calculateProfile = (mindsetAnswers: Record<number, number>) => {
+  // Analyze savings tendency (questions 1, 5, 9, 12, 15)
+  const saverQuestions = [1, 5, 9, 12, 15];
+  const saverScore = saverQuestions.reduce((sum, qId) => 
+    sum + (mindsetAnswers[qId] || 0), 0) / saverQuestions.length;
+  
+  // Analyze spending tendency (questions 4, 7, 10)
+  const spenderQuestions = [4, 7, 10];
+  const spenderScore = spenderQuestions.reduce((sum, qId) => 
+    sum + (mindsetAnswers[qId] || 0), 0) / spenderQuestions.length;
+  
+  // Analyze investing mindset (questions 2, 6, 11, 14)
+  const investorQuestions = [2, 6, 11, 14];
+  const investorScore = investorQuestions.reduce((sum, qId) => 
+    sum + (mindsetAnswers[qId] || 0), 0) / investorQuestions.length;
+  
+  // Determine primary profile (highest score)
+  const scores = [
+    { type: 'Saver', score: saverScore },
+    { type: 'Spender', score: spenderScore },
+    { type: 'Investor', score: investorScore }
+  ];
+  
+  // Sort by score (highest first)
+  scores.sort((a, b) => b.score - a.score);
+  
+  return {
+    primaryProfile: scores[0].type,
+    secondaryProfile: scores[1].type,
+    profiles: scores
+  };
+};
+
+const calculateFinancialLiteracyScore = (answers: Record<number, string>) => {
+  let correctAnswers = 0;
+  
+  knowledgeQuestions.forEach(question => {
+    const userAnswer = answers[question.id];
+    if (userAnswer) {
+      const correctOption = question.options.find(option => option.isCorrect);
+      if (correctOption && userAnswer === correctOption.id) {
+        correctAnswers++;
+      }
+    }
+  });
+  
+  const totalQuestions = knowledgeQuestions.length;
+  const percentageScore = Math.round((correctAnswers / totalQuestions) * 100);
+  
+  return {
+    correct: correctAnswers,
+    total: totalQuestions,
+    percentage: percentageScore
+  };
+};
+
 const QuestionnaireForm: React.FC = () => {
   const navigate = useNavigate();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [mindsetAnswers, setMindsetAnswers] = useState<Record<number, number>>({});
   const [knowledgeAnswers, setKnowledgeAnswers] = useState<Record<number, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const [results, setResults] = useState<{
+    literacyScore: {
+      correct: number;
+      total: number;
+      percentage: number;
+    };
+    profile: {
+      primaryProfile: string;
+      secondaryProfile: string;
+      profiles: {
+        type: string;
+        score: number;
+      }[];
+    };
+  } | null>(null);
   
   const currentQuestion = allQuestions[currentQuestionIndex];
   const totalQuestions = allQuestions.length;
   const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
   
-  const isKnowledgeQuestion = currentQuestion.type === 'knowledge';
+  const isKnowledgeQuestion = currentQuestion?.type === 'knowledge';
   
   const handleMindsetAnswer = (value: number) => {
     const newAnswers = { ...mindsetAnswers, [currentQuestion.id]: value };
@@ -223,15 +406,30 @@ const QuestionnaireForm: React.FC = () => {
   const handleSubmit = () => {
     setIsSubmitting(true);
     
-    // Simulate API call
+    // Calculate scores and profiles
+    const literacyScore = calculateFinancialLiteracyScore(knowledgeAnswers);
+    const profile = calculateProfile(mindsetAnswers);
+    
+    setResults({
+      literacyScore,
+      profile
+    });
+    
+    // Save answers to localStorage for later use
+    localStorage.setItem('mindsetQuestionnaire', JSON.stringify(mindsetAnswers));
+    localStorage.setItem('knowledgeQuestionnaire', JSON.stringify(knowledgeAnswers));
+    localStorage.setItem('financialLiteracyScore', JSON.stringify(literacyScore));
+    localStorage.setItem('financialProfile', JSON.stringify(profile));
+    
+    // Show results after a short delay
     setTimeout(() => {
-      // Save answers to localStorage for now
-      localStorage.setItem('mindsetQuestionnaire', JSON.stringify(mindsetAnswers));
-      localStorage.setItem('knowledgeQuestionnaire', JSON.stringify(knowledgeAnswers));
-      
-      // Navigate to dashboard
-      navigate('/dashboard');
-    }, 1500);
+      setIsSubmitting(false);
+      setShowResults(true);
+    }, 1000);
+  };
+  
+  const handleFinish = () => {
+    navigate('/dashboard');
   };
   
   const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
@@ -240,6 +438,11 @@ const QuestionnaireForm: React.FC = () => {
     : mindsetAnswers[currentQuestion.id] !== undefined;
   
   const hasAnsweredAll = Object.keys(mindsetAnswers).length + Object.keys(knowledgeAnswers).length === totalQuestions;
+  
+  // If we're showing results, render the results screen
+  if (showResults && results) {
+    return <ResultsScreen results={results} onFinish={handleFinish} />;
+  }
   
   // Render multiple choice options for knowledge questions
   const renderKnowledgeOptions = () => {
