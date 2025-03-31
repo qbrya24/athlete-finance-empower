@@ -40,13 +40,13 @@ const Dashboard = () => {
   return (
     <AppLayout>
       <div className="page-container">
-        <FadeIn className="mb-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+        <FadeIn className="mb-6 md:mb-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-4 md:mb-6">
             <div>
               <span className="inline-block px-3 py-1 bg-cream text-green rounded-full text-xs font-medium mb-2">
                 Dashboard
               </span>
-              <h1 className="text-3xl md:text-4xl font-semibold">Welcome to Final Whistle Wealth</h1>
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold">Welcome to Final Whistle Wealth</h1>
             </div>
             <button
               onClick={() => navigate('/financial-tools')}
@@ -58,7 +58,7 @@ const Dashboard = () => {
           </div>
           
           {/* Quick stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 md:mb-8">
             <div className="bg-green p-4 rounded-xl shadow-sm border border-cream/10 text-cream">
               <div className="text-xs uppercase tracking-wider text-cream/70 mb-1">Emergency Fund</div>
               <div className="flex items-baseline">
@@ -95,12 +95,12 @@ const Dashboard = () => {
         </FadeIn>
         
         {/* Main categories */}
-        <div className="mb-12">
+        <div className="mb-8 md:mb-12">
           <FadeIn>
-            <h2 className="text-xl font-semibold mb-6">Get Started</h2>
+            <h2 className="text-xl font-semibold mb-4 md:mb-6">Get Started</h2>
           </FadeIn>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {categories.map((category, index) => (
               <CategoryCard
                 key={category.title}
@@ -115,16 +115,16 @@ const Dashboard = () => {
         </div>
         
         {/* Resources section */}
-        <div className="mb-12">
+        <div className="mb-8 md:mb-12">
           <ResourcesSection />
         </div>
         
         {/* Recent activity */}
         <FadeIn delay={300}>
-          <div className="bg-green rounded-xl p-6 shadow-sm border border-cream/10 text-cream">
+          <div className="bg-green rounded-xl p-4 md:p-6 shadow-sm border border-cream/10 text-cream">
             <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
             
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               <div className="flex items-center justify-between py-3 border-b border-cream/10">
                 <div className="flex items-center">
                   <div className="w-10 h-10 rounded-full bg-cream/20 flex items-center justify-center mr-3">

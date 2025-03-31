@@ -38,20 +38,29 @@ const profileDescriptions = {
     icon: <PiggyBank className="w-12 h-12 text-green" />,
     strengths: ["Building emergency funds", "Living below means", "Avoiding debt"],
     challenges: ["Missing investment opportunities", "Under-spending on experiences", "Anxiety about money"],
+    color: "bg-green-100",
+    textColor: "text-green-800",
+    borderColor: "border-green-200",
   },
   Spender: {
     title: "You're a Spender",
     description: "You appreciate the value of using money in the present to enhance your life. You enjoy experiences and may prioritize immediate enjoyment over long-term planning.",
-    icon: <Wallet className="w-12 h-12 text-green" />,
+    icon: <Wallet className="w-12 h-12 text-gold" />,
     strengths: ["Living in the moment", "Generosity", "Experiencing life fully"],
     challenges: ["Saving for long-term goals", "Budget discipline", "Impulse control"],
+    color: "bg-gold-50",
+    textColor: "text-gold-800",
+    borderColor: "border-gold-200",
   },
   Investor: {
     title: "You're an Investor",
     description: "You see money as a tool for growth and tend to make strategic decisions. You're comfortable with calculated risks and focus on long-term returns.",
-    icon: <LineChart className="w-12 h-12 text-green" />,
+    icon: <LineChart className="w-12 h-12 text-blue-600" />,
     strengths: ["Growing wealth", "Strategic thinking", "Balancing risk"],
     challenges: ["Emotional reactions to market changes", "Over-analyzing decisions", "Work-life balance"],
+    color: "bg-blue-50",
+    textColor: "text-blue-800",
+    borderColor: "border-blue-200",
   }
 };
 
@@ -64,11 +73,27 @@ const getScoreCategory = (percentage: number): string => {
   return "Needs Improvement";
 };
 
-const getScoreColor = (percentage: number): string => {
-  if (percentage >= 80) return "text-green-600";
-  if (percentage >= 60) return "text-blue-600";
-  if (percentage >= 40) return "text-yellow-600";
-  return "text-red-500";
+const getScoreColor = (percentage: number): { text: string; bg: string; ring: string } => {
+  if (percentage >= 80) return { 
+    text: "text-green-600", 
+    bg: "bg-green-600",
+    ring: "text-green-100" 
+  };
+  if (percentage >= 60) return { 
+    text: "text-blue-600", 
+    bg: "bg-blue-600",
+    ring: "text-blue-100" 
+  };
+  if (percentage >= 40) return { 
+    text: "text-gold", 
+    bg: "bg-gold",
+    ring: "text-gold-100" 
+  };
+  return { 
+    text: "text-red-500", 
+    bg: "bg-red-500",
+    ring: "text-red-100" 
+  };
 };
 
 const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onFinish }) => {
@@ -82,8 +107,8 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onFinish }) => {
   return (
     <FadeIn className="max-w-2xl mx-auto">
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green/10 mb-4">
-          <Award className="w-8 h-8 text-green" />
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-50 text-green mb-4">
+          <Award className="w-8 h-8" />
         </div>
         <h2 className="text-2xl md:text-3xl font-semibold mb-2">Your Financial Profile</h2>
         <p className="text-green/70">
@@ -92,21 +117,21 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onFinish }) => {
       </div>
 
       {/* Financial Literacy Score */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Brain className="w-6 h-6 mr-2 text-green" />
+      <Card className="mb-8 border-2 border-green-100">
+        <CardHeader className="bg-green-50/50">
+          <CardTitle className="flex items-center text-green-800">
+            <Brain className="w-6 h-6 mr-2" />
             Financial Literacy Score
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-green-600">
             Based on your answers to our knowledge questions
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <div className="flex flex-col items-center text-center">
             <div className="relative w-32 h-32 mb-4">
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className={`text-4xl font-bold ${scoreColor}`}>
+                <div className={`text-4xl font-bold ${scoreColor.text}`}>
                   {literacyScore.percentage}%
                 </div>
               </div>
@@ -128,12 +153,12 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onFinish }) => {
                   strokeWidth="8"
                   strokeDasharray="283"
                   strokeDashoffset={283 - (283 * literacyScore.percentage) / 100}
-                  className={`transform -rotate-90 origin-center ${scoreColor}`}
+                  className={`transform -rotate-90 origin-center ${scoreColor.bg}`}
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold">{scoreCategory}</h3>
-            <p className="text-green/70 mt-2">
+            <h3 className={`text-xl font-semibold ${scoreColor.text}`}>{scoreCategory}</h3>
+            <p className="text-green-700 mt-2 font-medium">
               You answered {literacyScore.correct} out of {literacyScore.total} questions correctly
             </p>
           </div>
@@ -141,43 +166,45 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onFinish }) => {
       </Card>
 
       {/* Primary Financial Profile */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Lightbulb className="w-6 h-6 mr-2 text-green" />
+      <Card className={`mb-6 border-2 ${primaryProfileInfo.borderColor}`}>
+        <CardHeader className={`${primaryProfileInfo.color}`}>
+          <CardTitle className={`flex items-center ${primaryProfileInfo.textColor}`}>
+            <Lightbulb className="w-6 h-6 mr-2" />
             Your Financial Mindset
           </CardTitle>
-          <CardDescription>
+          <CardDescription className={primaryProfileInfo.textColor}>
             Your primary financial personality
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 pt-6">
           <div className="flex items-start gap-4">
-            {primaryProfileInfo.icon}
+            <div className={`p-3 rounded-lg ${primaryProfileInfo.color}`}>
+              {primaryProfileInfo.icon}
+            </div>
             <div>
-              <h3 className="text-xl font-semibold mb-1">{primaryProfileInfo.title}</h3>
-              <p className="text-green/70">{primaryProfileInfo.description}</p>
+              <h3 className={`text-xl font-semibold mb-1 ${primaryProfileInfo.textColor}`}>{primaryProfileInfo.title}</h3>
+              <p className="text-green-700">{primaryProfileInfo.description}</p>
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h4 className="font-medium mb-2">Your Strengths</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-green-50 p-4 rounded-lg">
+              <h4 className="font-medium mb-2 text-green-800">Your Strengths</h4>
               <ul className="space-y-1">
                 {primaryProfileInfo.strengths.map((strength, index) => (
-                  <li key={index} className="text-sm flex items-center">
+                  <li key={index} className="text-sm flex items-center text-green-700">
                     <div className="w-1.5 h-1.5 rounded-full bg-green mr-2"></div>
                     {strength}
                   </li>
                 ))}
               </ul>
             </div>
-            <div>
-              <h4 className="font-medium mb-2">Your Challenges</h4>
+            <div className="bg-red-50 p-4 rounded-lg">
+              <h4 className="font-medium mb-2 text-red-800">Your Challenges</h4>
               <ul className="space-y-1">
                 {primaryProfileInfo.challenges.map((challenge, index) => (
-                  <li key={index} className="text-sm flex items-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-red-400 mr-2"></div>
+                  <li key={index} className="text-sm flex items-center text-red-700">
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-500 mr-2"></div>
                     {challenge}
                   </li>
                 ))}
@@ -185,9 +212,9 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onFinish }) => {
             </div>
           </div>
           
-          <div className="pt-4 border-t border-gray-100">
-            <h4 className="font-medium mb-2">Your Secondary Trait: {profile.secondaryProfile}</h4>
-            <p className="text-sm text-green/70">
+          <div className={`pt-4 border-t border-gray-200 mt-4 ${secondaryProfileInfo.color} p-4 rounded-lg`}>
+            <h4 className={`font-medium mb-2 ${secondaryProfileInfo.textColor}`}>Your Secondary Trait: {profile.secondaryProfile}</h4>
+            <p className={`text-sm ${secondaryProfileInfo.textColor}`}>
               You also show characteristics of a {profile.secondaryProfile.toLowerCase()}, which means 
               {profile.secondaryProfile === "Saver" ? " you value financial security and planning ahead." : 
                profile.secondaryProfile === "Spender" ? " you appreciate enjoying the present and life experiences." : 
@@ -198,33 +225,41 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onFinish }) => {
       </Card>
       
       {/* Profile Score Breakdown */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle className="text-lg">Profile Breakdown</CardTitle>
+      <Card className="mb-8 border-2 border-green-100">
+        <CardHeader className="bg-green-50/50">
+          <CardTitle className="text-lg text-green-800">Profile Breakdown</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           <div className="space-y-4">
-            {profile.profiles.map((p) => (
-              <div key={p.type} className="space-y-1">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">{p.type}</span>
-                  <span className="text-sm text-green/70">{Math.round(p.score * 20)}%</span>
+            {profile.profiles.map((p) => {
+              const profileColor = p.type === "Saver" 
+                ? "bg-green" 
+                : p.type === "Spender" 
+                  ? "bg-gold" 
+                  : "bg-blue-600";
+                  
+              return (
+                <div key={p.type} className="space-y-1">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-green-800">{p.type}</span>
+                    <span className="text-sm font-medium text-green-700">{Math.round(p.score * 20)}%</span>
+                  </div>
+                  <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden border border-gray-200">
+                    <div 
+                      className={`h-full rounded-full ${profileColor}`} 
+                      style={{width: `${p.score * 20}%`}}
+                    />
+                  </div>
                 </div>
-                <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div 
-                    className={`h-full rounded-full bg-green`} 
-                    style={{width: `${p.score * 20}%`}}
-                  />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </CardContent>
       </Card>
       
       <Button 
         onClick={onFinish}
-        className="w-full bg-green hover:bg-green-600 py-6 text-white"
+        className="w-full bg-green hover:bg-green-600 py-6 text-white font-semibold text-lg"
       >
         Continue to Dashboard
         <ChevronRight className="ml-2 w-5 h-5" />
