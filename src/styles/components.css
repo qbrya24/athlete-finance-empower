@@ -32,4 +32,24 @@
   .fade-in-section.is-visible {
     @apply opacity-100 translate-y-0;
   }
+  
+  /* iPhone 16:9 specific components */
+  .iphone-16-9-card {
+    @apply rounded-lg p-3 border border-green/10;
+    height: auto;
+    max-height: calc(var(--vh, 1vh) * 40);
+    overflow-y: auto;
+  }
+  
+  .iphone-16-9-container {
+    @apply px-2 py-2;
+    height: calc(var(--vh, 1vh) * 100 - 133px);
+    overflow-y: auto;
+  }
+  
+  .iphone-tool-card {
+    height: auto;
+    min-height: 100px;
+    max-height: none;
+  }
 }

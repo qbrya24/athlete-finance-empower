@@ -18,11 +18,23 @@
   
   .page-container {
     @apply pb-16;
+    min-height: 100%;
+    height: auto;
   }
 
   .scale-content {
     height: auto;
     width: 100%;
+    max-height: none !important;
+  }
+  
+  /* 16:9 ratio optimization */
+  .ratio-16-9 {
+    aspect-ratio: 16/9;
+    width: 100%;
+    height: auto;
+    max-height: 100vh;
+    overflow: auto;
   }
 }
 
@@ -35,5 +47,38 @@
   .iphone-notch-padding {
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* iPhone 16:9 aspect ratio optimization */
+@media only screen 
+  and (min-device-width: 320px) 
+  and (max-device-width: 480px)
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (aspect-ratio: 16/9) {
+  
+  .page-container {
+    @apply py-2 px-2;
+    overflow-y: auto;
+    height: auto;
+    min-height: calc(100% - 120px);
+  }
+  
+  .content-wrapper {
+    height: auto;
+    min-height: calc(100vh - 140px);
+    overflow-y: auto;
+  }
+  
+  .financial-tool-container {
+    padding-bottom: 80px;
+  }
+  
+  .card-content {
+    max-height: none;
+  }
+  
+  .tool-card {
+    height: auto;
   }
 }

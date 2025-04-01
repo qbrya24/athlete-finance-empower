@@ -19,23 +19,28 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const isMobile = useIsMobile();
+  const isFinancialTools = location.pathname === '/financial-tools';
   
   useEffect(() => {
     setMenuOpen(false);
   }, [location.pathname]);
 
-  // Add meta viewport tag for proper scaling
+  // Add meta viewport tag for proper scaling and iPhone optimization
   useEffect(() => {
     const metaViewport = document.querySelector('meta[name="viewport"]');
     if (metaViewport) {
       metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0');
     }
     
-    // Remove any aspect ratio constraints
+    // iPhone 16:9 optimizations
     const handleResize = () => {
       if (isMobile) {
         document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
         document.documentElement.style.setProperty('--app-width', `${window.innerWidth}px`);
+        
+        // Calculate and set viewport height for iPhone 16:9 aspect ratio
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
       }
     };
     
@@ -157,8 +162,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         ))}
       </div>
 
-      <main className="pt-[61px] pb-[72px] md:pb-0 min-h-screen">
-        <div className="container mx-auto px-3 sm:px-4 py-4 overflow-auto">
+      <main className={cn(
+        "pt-[61px] pb-[72px] md:pb-0 min-h-screen",
+        isFinancialTools && "financial-tool-container"
+      )}>
+        <div className={cn(
+          "container mx-auto px-3 sm:px-4 py-4 overflow-auto content-wrapper",
+          isFinancialTools && "no-scrollbar"
+        )}>
           {children}
         </div>
       </main>
