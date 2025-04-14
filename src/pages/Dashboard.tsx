@@ -1,14 +1,49 @@
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import AppLayout from '@/components/layout/AppLayout';
 import CategoryCard from '@/components/dashboard/CategoryCard';
 import ResourcesSection from '@/components/dashboard/ResourcesSection';
 import FadeIn from '@/components/animations/FadeIn';
 import { BookOpen, BarChart3, Newspaper, TrendingUp, PiggyBank, ArrowUpRight } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+
+interface FinancialData {
+  cash_on_hand: number;
+  emergency_fund_current: number;
+  emergency_fund_goal: number;
+  investments_total: number;
+  investments_change: number;
+  net_worth: number;
+}
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  const { data: financialData, isLoading, error } = useQuery({
+    queryKey: ['userFinancialData'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('user_financial_data')
+        .select('*')
+        .single();
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Unable to fetch financial data",
+        variant: "destructive"
+      });
+    }
+  }, [error, toast]);
   
   const categories = [
     {
@@ -62,19 +97,37 @@ const Dashboard = () => {
             <div className="bg-green p-3 rounded-xl shadow-sm border border-cream/10 text-cream">
               <div className="text-xs uppercase tracking-wider text-cream/70 mb-1">Emergency Fund</div>
               <div className="flex items-baseline">
-                <span className="text-lg md:text-xl font-semibold mr-2">$5,000</span>
-                <span className="text-xs text-cream/70">/ $15,000 goal</span>
+                <span className="text-lg md:text-xl font-semibold mr-2">
+                  ${financialData?.emergency_fund_current?.toLocaleString() || '0'}
+                </span>
+                <span className="text-xs text-cream/70">
+                  / ${financialData?.emergency_fund_goal?.toLocaleString() || '5,000'} goal
+                </span>
               </div>
               <div className="w-full h-2 bg-cream/20 rounded-full mt-2">
-                <div className="h-full bg-gold rounded-full" style={{ width: '33%' }} />
+                <div 
+                  className="h-full bg-gold rounded-full" 
+                  style={{ 
+                    width: `${
+                      financialData 
+                        ? (financialData.emergency_fund_current / financialData.emergency_fund_goal) * 100 
+                        : 0
+                    }%` 
+                  }} 
+                />
               </div>
             </div>
             
             <div className="bg-green p-3 rounded-xl shadow-sm border border-cream/10 text-cream">
               <div className="text-xs uppercase tracking-wider text-cream/70 mb-1">Investments</div>
               <div className="flex items-baseline">
-                <span className="text-lg md:text-xl font-semibold mr-2">$12,500</span>
-                <span className="text-xs text-gold">+5.2%</span>
+                <span className="text-lg md:text-xl font-semibold mr-2">
+                  ${financialData?.investments_total?.toLocaleString() || '0'}
+                </span>
+                <span className={`text-xs ${(financialData?.investments_change || 0) >= 0 ? 'text-gold' : 'text-red-300'}`}>
+                  {(financialData?.investments_change || 0) >= 0 ? '+' : ''}
+                  {financialData?.investments_change?.toLocaleString() || '0'}%
+                </span>
               </div>
               <div className="flex items-center mt-1">
                 <PiggyBank className="w-4 h-4 text-cream mr-1" />
@@ -85,7 +138,9 @@ const Dashboard = () => {
             <div className="bg-green p-3 rounded-xl shadow-sm border border-cream/10 text-cream">
               <div className="text-xs uppercase tracking-wider text-cream/70 mb-1">Cash Available</div>
               <div className="flex items-baseline">
-                <span className="text-lg md:text-xl font-semibold">$3,200</span>
+                <span className="text-lg md:text-xl font-semibold">
+                  ${financialData?.cash_on_hand?.toLocaleString() || '0'}
+                </span>
               </div>
               <div className="flex items-center mt-1">
                 <span className="text-xs text-cream/70">Last updated today</span>

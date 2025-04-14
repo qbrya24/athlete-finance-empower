@@ -60,6 +60,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_financial_data: {
+        Row: {
+          cash_on_hand: number | null
+          created_at: string | null
+          emergency_fund_current: number | null
+          emergency_fund_goal: number | null
+          id: string
+          investments_change: number | null
+          investments_total: number | null
+          net_worth: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          cash_on_hand?: number | null
+          created_at?: string | null
+          emergency_fund_current?: number | null
+          emergency_fund_goal?: number | null
+          id?: string
+          investments_change?: number | null
+          investments_total?: number | null
+          net_worth?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          cash_on_hand?: number | null
+          created_at?: string | null
+          emergency_fund_current?: number | null
+          emergency_fund_goal?: number | null
+          id?: string
+          investments_change?: number | null
+          investments_total?: number | null
+          net_worth?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
