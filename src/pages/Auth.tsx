@@ -1,16 +1,18 @@
 
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Logo from '@/components/ui/Logo';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/providers/AuthProvider';
 
 const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState({
@@ -19,6 +21,13 @@ const Auth = () => {
     name: '',
     phone: '',
   });
+
+  // If user is already logged in, redirect to onboarding
+  useEffect(() => {
+    if (user) {
+      navigate('/onboarding');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,9 +52,6 @@ const Auth = () => {
           title: "Success!",
           description: "Please check your email to verify your account.",
         });
-        
-        // Navigate to onboarding after successful signup
-        navigate('/onboarding');
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: formData.email,
@@ -54,8 +60,10 @@ const Auth = () => {
         
         if (error) throw error;
         
-        // Navigate to onboarding after successful login
-        navigate('/onboarding');
+        toast({
+          title: "Welcome back!",
+          description: "Successfully signed in.",
+        });
       }
     } catch (error: any) {
       toast({
