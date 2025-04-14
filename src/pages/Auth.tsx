@@ -16,6 +16,8 @@ const Auth = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    name: '',
+    phone: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,12 +26,29 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { error: signUpError } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
+          options: {
+            data: {
+              name: formData.name,
+              phone: formData.phone,
+            }
+          }
         });
         
-        if (error) throw error;
+        if (signUpError) throw signUpError;
+        
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ 
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone 
+          })
+          .eq('id', (await supabase.auth.getUser()).data.user?.id);
+
+        if (profileError) throw profileError;
         
         toast({
           title: "Success!",
@@ -73,6 +92,30 @@ const Auth = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
+            {isSignUp && (
+              <>
+                <div>
+                  <Input
+                    type="text"
+                    placeholder="Full Name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required={isSignUp}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <Input
+                    type="tel"
+                    placeholder="Phone Number"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    required={isSignUp}
+                    className="w-full"
+                  />
+                </div>
+              </>
+            )}
             <div>
               <Input
                 type="email"
