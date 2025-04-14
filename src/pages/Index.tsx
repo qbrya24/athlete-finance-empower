@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FadeIn } from '@/components/animations/FadeIn';
@@ -10,7 +9,6 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [userState, setUserState] = useState<'new' | 'existing' | null>(null);
 
-  // Check if user has used the app before
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -22,12 +20,7 @@ const Index = () => {
   const handleUserSelection = (state: 'new' | 'existing') => {
     setUserState(state);
     setTimeout(() => {
-      if (state === 'new') {
-        navigate('/onboarding');
-      } else {
-        // For now, just go to dashboard since we don't have auth
-        navigate('/dashboard');
-      }
+      navigate('/auth');
     }, 300);
   };
 
@@ -39,7 +32,6 @@ const Index = () => {
           loading ? "scale-100" : "scale-90"
         )}
       >
-        {/* Logo and branding */}
         <div className="flex flex-col items-center mb-12 relative">
           <FadeIn>
             <Logo size="lg" className="mb-6" />
@@ -58,7 +50,6 @@ const Index = () => {
           </FadeIn>
         </div>
 
-        {/* Options */}
         {!loading && (
           <div className="space-y-4">
             <FadeIn delay={700}>
@@ -121,7 +112,6 @@ const Index = () => {
           </div>
         )}
 
-        {/* Logo at bottom */}
         <div className="flex justify-center mt-16">
           <Logo size="sm" variant="icon" className="opacity-60" />
         </div>
