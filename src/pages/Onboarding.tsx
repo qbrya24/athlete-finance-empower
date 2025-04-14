@@ -1,11 +1,11 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/ui/Logo';
 import FadeIn from '@/components/animations/FadeIn';
 import QuestionnaireForm from '@/components/onboarding/QuestionnaireForm';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
+import { useAuth } from '@/providers/AuthProvider';
 
 const OnboardingSteps = [
   { id: 'personal', title: 'Personal Information' },
@@ -14,6 +14,14 @@ const OnboardingSteps = [
 
 const Onboarding = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/auth');
+    }
+  }, [user, navigate]);
+
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     name: '',
@@ -29,7 +37,6 @@ const Onboarding = () => {
       [name]: value,
     });
     
-    // Clear error when typing
     if (errors[name]) {
       setErrors({
         ...errors,
@@ -78,7 +85,6 @@ const Onboarding = () => {
   return (
     <AppLayout withNavigation={false}>
       <div className="min-h-screen bg-cream flex flex-col">
-        {/* Header */}
         <header className="py-4 px-4 border-b border-green/5">
           <div className="container max-w-4xl mx-auto flex items-center justify-between">
             <Logo size="sm" />
@@ -185,7 +191,6 @@ const Onboarding = () => {
           )}
         </main>
         
-        {/* Navigation footer (only for first step) */}
         {currentStep === 0 && (
           <footer className="py-4 px-4 border-t border-green/5 bg-white/50 mt-auto">
             <div className="container max-w-4xl mx-auto flex justify-between">
