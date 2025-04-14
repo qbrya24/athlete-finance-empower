@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -26,7 +25,7 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        const { error: signUpError } = await supabase.auth.signUp({
+        const { error } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
           options: {
@@ -37,18 +36,7 @@ const Auth = () => {
           }
         });
         
-        if (signUpError) throw signUpError;
-        
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({ 
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone 
-          })
-          .eq('id', (await supabase.auth.getUser()).data.user?.id);
-
-        if (profileError) throw profileError;
+        if (error) throw error;
         
         toast({
           title: "Success!",
