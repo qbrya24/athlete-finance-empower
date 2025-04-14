@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -42,6 +43,9 @@ const Auth = () => {
           title: "Success!",
           description: "Please check your email to verify your account.",
         });
+        
+        // Navigate to onboarding after successful signup
+        navigate('/onboarding');
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: formData.email,
@@ -50,6 +54,7 @@ const Auth = () => {
         
         if (error) throw error;
         
+        // Navigate to onboarding after successful login
         navigate('/onboarding');
       }
     } catch (error: any) {
