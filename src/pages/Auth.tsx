@@ -77,15 +77,15 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-cream flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8">
+      <div className="w-full max-w-md space-y-8 bg-white rounded-xl shadow-lg p-8">
         <div className="text-center">
           <Logo size="lg" className="mx-auto mb-6" />
-          <h2 className="text-2xl font-semibold text-green">
+          <h2 className="text-2xl font-semibold text-green-700">
             {isSignUp ? 'Create your account' : 'Welcome back'}
           </h2>
-          <p className="text-green/70 mt-2">
+          <p className="text-green-500 mt-2">
             {isSignUp 
-              ? 'Start your journey to better financial health'
+              ? 'Start your journey to better financial health' 
               : 'Sign in to continue your progress'}
           </p>
         </div>
@@ -95,9 +95,11 @@ const Auth = () => {
             {isSignUp && (
               <>
                 <div>
+                  <label htmlFor="name" className="block text-green-600 mb-2">Full Name</label>
                   <Input
+                    id="name"
                     type="text"
-                    placeholder="Full Name"
+                    placeholder="Enter your full name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required={isSignUp}
@@ -105,9 +107,11 @@ const Auth = () => {
                   />
                 </div>
                 <div>
+                  <label htmlFor="phone" className="block text-green-600 mb-2">Phone Number</label>
                   <Input
+                    id="phone"
                     type="tel"
-                    placeholder="Phone Number"
+                    placeholder="Enter your phone number"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     required={isSignUp}
@@ -117,9 +121,11 @@ const Auth = () => {
               </>
             )}
             <div>
+              <label htmlFor="email" className="block text-green-600 mb-2">Email Address</label>
               <Input
+                id="email"
                 type="email"
-                placeholder="Email address"
+                placeholder="Enter your email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
@@ -127,9 +133,11 @@ const Auth = () => {
               />
             </div>
             <div>
+              <label htmlFor="password" className="block text-green-600 mb-2">Password</label>
               <Input
+                id="password"
                 type="password"
-                placeholder="Password"
+                placeholder="Enter your password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 required
@@ -141,7 +149,7 @@ const Auth = () => {
 
           <Button
             type="submit"
-            className="w-full bg-green hover:bg-green-600"
+            className="w-full bg-green-600 hover:bg-green-700 text-white"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -155,11 +163,11 @@ const Auth = () => {
           </Button>
         </form>
 
-        <div className="text-center">
+        <div className="text-center mt-4">
           <button
             type="button"
             onClick={() => setIsSignUp(!isSignUp)}
-            className="text-green hover:text-green-600 text-sm"
+            className="text-green-500 hover:text-green-700 text-sm transition-colors"
           >
             {isSignUp 
               ? 'Already have an account? Sign in' 
