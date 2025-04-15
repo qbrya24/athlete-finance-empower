@@ -82,36 +82,36 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="flex items-center justify-between">
         <Button
-          variant="ghost"
+          variant="outline"
           onClick={() => navigate('/education')}
-          className="gap-2 hover:bg-green/10"
+          className="gap-2 hover:bg-green-50 text-green-900 border-green-200"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 text-green-800" />
           Back to Modules
         </Button>
-        <div className="flex items-center gap-2 text-sm text-green/70 bg-green/5 px-3 py-1.5 rounded-full">
-          <Clock className="h-4 w-4" />
+        <div className="flex items-center gap-2 text-sm text-green-900 bg-green-100 px-3 py-1.5 rounded-full">
+          <Clock className="h-4 w-4 text-green-800" />
           {module.duration}
         </div>
       </div>
 
       <div className="text-center">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-green to-green/70 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold text-green-900">
           {module.title}
         </h1>
-        <p className="text-green/70 mt-3 max-w-2xl mx-auto">{module.description}</p>
+        <p className="text-green-800 mt-3 max-w-2xl mx-auto">{module.description}</p>
       </div>
 
-      <Card className="bg-cream/5 border-green/10 shadow-lg">
+      <Card className="bg-white/90 border-green-200 shadow-lg">
         <CardHeader>
-          <h2 className="text-xl font-semibold">Learning Objectives</h2>
+          <h2 className="text-xl font-semibold text-green-900">Learning Objectives</h2>
         </CardHeader>
         <CardContent>
           <ul className="grid gap-4 md:grid-cols-2">
             {module.learning_objectives.map((objective: string, index: number) => (
-              <li key={index} className="flex items-start gap-3 bg-green/5 p-4 rounded-lg">
-                <CheckCircle className="h-5 w-5 text-green shrink-0 mt-0.5" />
-                <span className="text-green/90">{objective}</span>
+              <li key={index} className="flex items-start gap-3 bg-green-50 p-4 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-green-700 shrink-0 mt-0.5" />
+                <span className="text-green-900">{objective}</span>
               </li>
             ))}
           </ul>
@@ -120,10 +120,10 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
 
       <div>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold">Course Content</h2>
-          <div className="flex items-center gap-2 bg-green/5 px-3 py-1.5 rounded-full">
-            <BookOpen className="h-4 w-4 text-green" />
-            <span className="text-sm text-green/70">
+          <h2 className="text-xl font-semibold text-green-900">Course Content</h2>
+          <div className="flex items-center gap-2 bg-green-100 px-3 py-1.5 rounded-full">
+            <BookOpen className="h-4 w-4 text-green-800" />
+            <span className="text-sm text-green-900">
               {lessons.length} lessons
             </span>
           </div>
@@ -131,22 +131,22 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
 
         <Progress
           value={progress}
-          className="h-2 mb-8"
+          className="h-2 mb-8 bg-green-200"
         />
 
         <div className="grid gap-4">
           {lessons.map((lesson) => (
-            <Card key={lesson.id} className="transition-all duration-300 hover:shadow-md hover:scale-[1.01] border-green/10">
+            <Card key={lesson.id} className="transition-all duration-300 hover:shadow-md hover:scale-[1.01] border-green-200 bg-white/90">
               <CardContent className="p-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
-                    <h3 className="font-medium text-lg">{lesson.title}</h3>
-                    <p className="text-sm text-green/70 mt-1">
+                    <h3 className="font-medium text-lg text-green-900">{lesson.title}</h3>
+                    <p className="text-sm text-green-800 mt-1">
                       {lesson.description}
                     </p>
                   </div>
-                  <div className="text-sm text-green/70 flex items-center gap-2 whitespace-nowrap bg-green/5 px-3 py-1.5 rounded-full">
-                    <Clock className="h-4 w-4" />
+                  <div className="text-sm text-green-900 flex items-center gap-2 whitespace-nowrap bg-green-100 px-3 py-1.5 rounded-full">
+                    <Clock className="h-4 w-4 text-green-800" />
                     {lesson.duration}
                   </div>
                 </div>

@@ -1,15 +1,13 @@
-
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 import AppLayout from '@/components/layout/AppLayout';
 import FadeIn from '@/components/animations/FadeIn';
-import { BookOpen, Check, Clock, ArrowRight } from 'lucide-react';
+import { BookOpen, Check, Clock, ArrowRight, CheckCircle } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { Progress } from '@/components/ui/progress';
 import ModuleDetails from '@/components/education/ModuleDetails';
 import { Card } from '@/components/ui/card';
-import { CheckCircle } from 'lucide-react';
 
 type Module = {
   id: number;
@@ -128,13 +126,13 @@ const Education = () => {
             <FadeIn className="mb-12">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
                 <div>
-                  <span className="inline-block px-3 py-1 bg-green/20 text-green-700 rounded-full text-xs font-medium mb-2">
+                  <span className="inline-block px-3 py-1 bg-green-100 text-green-900 rounded-full text-xs font-medium mb-2">
                     Education
                   </span>
                   <h1 className="text-4xl font-bold text-green-900">
                     Final Whistle Wealth
                   </h1>
-                  <p className="text-green-700 mt-2 text-lg">
+                  <p className="text-green-800 mt-2 text-lg">
                     Personalized financial education for athletes
                   </p>
                 </div>
@@ -142,11 +140,11 @@ const Education = () => {
             </FadeIn>
 
             <FadeIn delay={100} className="mb-10">
-              <Card className="bg-white/80 backdrop-blur border-green/20 shadow-lg p-6">
+              <Card className="bg-white/90 backdrop-blur border-green-200 shadow-lg p-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                   <h2 className="text-xl font-semibold text-green-900">Your Learning Progress</h2>
-                  <div className="text-green-800 flex items-center gap-2 bg-green/10 px-3 py-1.5 rounded-full">
-                    <BookOpen className="w-4 h-4 text-green-700" />
+                  <div className="text-green-900 flex items-center gap-2 bg-green-100 px-3 py-1.5 rounded-full">
+                    <BookOpen className="w-4 h-4 text-green-800" />
                     <span>
                       {Object.values(userProgress).filter(p => p === 100).length} of {modules.length} modules completed
                     </span>
@@ -155,7 +153,7 @@ const Education = () => {
                 
                 <Progress 
                   value={(Object.values(userProgress).filter(p => p === 100).length / Math.max(1, modules.length)) * 100} 
-                  className="h-2 mb-6" 
+                  className="h-2 mb-6 bg-green-200" 
                 />
                 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -164,7 +162,7 @@ const Education = () => {
                       <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-3 transition-colors ${
                         userProgress[module.id] === 100 
                           ? 'bg-green-700 text-white' 
-                          : 'bg-green/20 text-green-800'
+                          : 'bg-green-100 text-green-900'
                       }`}>
                         {userProgress[module.id] === 100 ? <Check className="w-5 h-5" /> : module.order_index}
                       </div>
@@ -190,30 +188,30 @@ const Education = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {modules.map((module) => (
                   <FadeIn key={module.id} delay={300 + module.order_index * 100}>
-                    <Card className="bg-white/80 backdrop-blur border-green/20 shadow-lg h-full transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
+                    <Card className="bg-white/90 backdrop-blur border-green-200 shadow-lg h-full transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
                       <div className="p-6 flex flex-col h-full">
                         <h3 className="text-xl font-semibold mb-3 text-green-900">{module.title}</h3>
                         <p className="text-green-800 mb-6">{module.description}</p>
                         
                         <div className="flex items-center gap-4 mb-6">
-                          <div className="flex items-center text-sm text-green-800 bg-green/10 px-3 py-1.5 rounded-full">
-                            <BookOpen className="w-4 h-4 mr-1 text-green-700" />
+                          <div className="flex items-center text-sm text-green-900 bg-green-100 px-3 py-1.5 rounded-full">
+                            <BookOpen className="w-4 h-4 mr-1 text-green-800" />
                             {module.lessons_count} lessons
                           </div>
-                          <div className="flex items-center text-sm text-green-800 bg-green/10 px-3 py-1.5 rounded-full">
-                            <Clock className="w-4 h-4 mr-1 text-green-700" />
+                          <div className="flex items-center text-sm text-green-900 bg-green-100 px-3 py-1.5 rounded-full">
+                            <Clock className="w-4 h-4 mr-1 text-green-800" />
                             {module.duration}
                           </div>
                         </div>
                         
                         {userProgress[module.id] > 0 && (
                           <>
-                            <div className="text-sm text-green-700 mb-2">
+                            <div className="text-sm text-green-800 mb-2">
                               {userProgress[module.id]}% completed
                             </div>
                             <Progress 
                               value={userProgress[module.id]} 
-                              className="h-2 mb-6" 
+                              className="h-2 mb-6 bg-green-200" 
                             />
                           </>
                         )}
@@ -226,7 +224,7 @@ const Education = () => {
                               ${userProgress[module.id] > 0 && userProgress[module.id] < 100
                                 ? 'bg-green-700 text-white hover:bg-green-800' 
                                 : userProgress[module.id] === 100 
-                                  ? 'border border-green-700 text-green-900 hover:bg-green/10'
+                                  ? 'border border-green-700 text-green-900 hover:bg-green-50'
                                   : 'bg-green-700 text-white hover:bg-green-800'
                               }
                             `}
@@ -241,7 +239,7 @@ const Education = () => {
                           </button>
                         </div>
 
-                        <div className="mt-6 pt-6 border-t border-green/20">
+                        <div className="mt-6 pt-6 border-t border-green-200">
                           <h4 className="text-sm font-semibold mb-3 text-green-900">Learning Objectives:</h4>
                           <ul className="space-y-2">
                             {module.learning_objectives.map((objective, index) => (
