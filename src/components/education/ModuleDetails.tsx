@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
@@ -69,7 +70,7 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
   const renderLessonContent = (content: string) => {
     const paragraphs = content.split('\n\n');
     return paragraphs.map((paragraph, index) => (
-      <p key={index} className="mb-4 text-gray-700">
+      <p key={index} className="mb-4 text-slate-700 leading-relaxed">
         {paragraph}
       </p>
     ));
@@ -77,13 +78,13 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
 
   if (loading) {
     return <div className="flex items-center justify-center h-64">
-      <div className="text-lg text-green/70">Loading module details...</div>
+      <div className="text-lg text-slate-600">Loading module details...</div>
     </div>;
   }
 
   if (!module) {
     return <div className="flex items-center justify-center h-64">
-      <div className="text-lg text-green/70">Module not found</div>
+      <div className="text-lg text-slate-600">Module not found</div>
     </div>;
   }
 
