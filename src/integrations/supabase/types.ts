@@ -60,6 +60,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_education_progress: {
+        Row: {
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          last_lesson_id: number | null
+          module_id: number
+          progress: number | null
+          started_at: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          last_lesson_id?: number | null
+          module_id: number
+          progress?: number | null
+          started_at?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          last_lesson_id?: number | null
+          module_id?: number
+          progress?: number | null
+          started_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_financial_data: {
         Row: {
           cash_on_hand: number | null

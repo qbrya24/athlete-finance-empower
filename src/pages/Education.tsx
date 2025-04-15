@@ -1,10 +1,16 @@
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '@/providers/AuthProvider';
+import { supabase } from '@/integrations/supabase/client';
 import AppLayout from '@/components/layout/AppLayout';
 import FadeIn from '@/components/animations/FadeIn';
 import { BookOpen, Check, Clock, ArrowRight, PlayCircle } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
 
 const Education = () => {
+  const { user } = useAuth();
+  const [userProgress, setUserProgress] = useState<Record<number, number>>({});
+  const [loading, setLoading] = useState(true);
+
   const modules = [
     {
       id: 1,
@@ -69,6 +75,74 @@ const Education = () => {
     }
   ];
 
+  useEffect(() => {
+    async function fetchUserProgress() {
+      try {
+        if (!user) return;
+
+        const { data, error } = await supabase
+          .from('user_education_progress')
+          .select('module_id, progress, completed')
+          .eq('user_id', user.id);
+
+        if (error) throw error;
+
+        const progressMap: Record<number, number> = {};
+        data.forEach(item => {
+          progressMap[item.module_id] = item.progress;
+        });
+        setUserProgress(progressMap);
+      } catch (error) {
+        console.error('Error fetching progress:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load your progress. Please try again later.",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchUserProgress();
+  }, [user]);
+
+  const handleStartModule = async (moduleId: number) => {
+    try {
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: "Please sign in to track your progress.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const { error } = await supabase
+        .from('user_education_progress')
+        .upsert({
+          user_id: user.id,
+          module_id: moduleId,
+          progress: userProgress[moduleId] || 0,
+          started_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+
+      setUserProgress(prev => ({
+        ...prev,
+        [moduleId]: prev[moduleId] || 0
+      }));
+    } catch (error) {
+      console.error('Error updating progress:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update progress. Please try again later.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <AppLayout>
       <div className="page-container">
@@ -91,26 +165,35 @@ const Education = () => {
               <h2 className="text-xl font-semibold">Your Learning Progress</h2>
               <div className="text-green/70 flex items-center">
                 <BookOpen className="w-4 h-4 mr-1" />
-                <span>1 of 4 modules completed</span>
+                <span>
+                  {Object.values(userProgress).filter(p => p === 100).length} of {modules.length} modules completed
+                </span>
               </div>
             </div>
             
             <div className="w-full h-2 bg-gray-100 rounded-full mb-4">
-              <div className="h-full bg-green rounded-full" style={{ width: '25%' }} />
+              <div 
+                className="h-full bg-green rounded-full" 
+                style={{ 
+                  width: `${(Object.values(userProgress).filter(p => p === 100).length / modules.length) * 100}%` 
+                }} 
+              />
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-              {[25, 0, 0, 0].map((percent, i) => (
+              {modules.map((_, i) => (
                 <div key={i} className="flex items-center">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${percent === 100 ? 'bg-green text-white' : 'bg-gray-100 text-gray-400'}`}>
-                    {percent === 100 ? <Check className="w-5 h-5" /> : i + 1}
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
+                    userProgress[i + 1] === 100 ? 'bg-green text-white' : 'bg-gray-100 text-gray-400'
+                  }`}>
+                    {userProgress[i + 1] === 100 ? <Check className="w-5 h-5" /> : i + 1}
                   </div>
                   <div className="text-sm">
-                    <div className={`font-medium ${percent > 0 ? 'text-green' : 'text-gray-600'}`}>
+                    <div className={`font-medium ${userProgress[i + 1] > 0 ? 'text-green' : 'text-gray-600'}`}>
                       Module {i + 1}
                     </div>
                     <div className="text-green/60">
-                      {percent}% complete
+                      {userProgress[i + 1] || 0}% complete
                     </div>
                   </div>
                 </div>
@@ -161,13 +244,13 @@ const Education = () => {
                       </div>
                     </div>
                     
-                    {module.progress > 0 && module.progress < 100 && (
+                    {userProgress[module.id] > 0 && userProgress[module.id] < 100 && (
                       <>
-                        <div className="text-sm text-green/70 mb-2">{module.progress}% completed</div>
+                        <div className="text-sm text-green/70 mb-2">{userProgress[module.id]}% completed</div>
                         <div className="w-full h-2 bg-gray-100 rounded-full mb-5">
                           <div 
                             className="h-full bg-green rounded-full"
-                            style={{ width: `${module.progress}%` }}
+                            style={{ width: `${userProgress[module.id]}%` }}
                           />
                         </div>
                       </>
@@ -175,20 +258,21 @@ const Education = () => {
                     
                     <div className="mt-auto">
                       <button
+                        onClick={() => handleStartModule(module.id)}
                         className={`
                           w-full py-3 rounded-lg flex items-center justify-center
-                          ${module.progress > 0 && module.progress < 100
+                          ${userProgress[module.id] > 0 && userProgress[module.id] < 100
                             ? 'bg-green text-white' 
-                            : module.completed 
+                            : userProgress[module.id] === 100 
                               ? 'border border-green/20 text-green hover:bg-green-50'
                               : 'bg-green text-white'
                           }
                           transition-all duration-300 button-hover
                         `}
                       >
-                        {module.progress > 0 && module.progress < 100 ? (
+                        {userProgress[module.id] > 0 && userProgress[module.id] < 100 ? (
                           <>Continue Learning</>
-                        ) : module.completed ? (
+                        ) : userProgress[module.id] === 100 ? (
                           <>Review Module</>
                         ) : (
                           <>Start Learning</>
