@@ -10,26 +10,6 @@ import QuestionCard from './questionnaire/QuestionCard';
 import AnswerOptions from './questionnaire/AnswerOptions';
 import ProgressBar from './questionnaire/ProgressBar';
 
-type QuestionType = 'mindset' | 'knowledge';
-
-type Question = {
-  id: number;
-  text: string;
-  type: QuestionType;
-};
-
-type AnswerOption = {
-  value: number;
-  label: string;
-};
-
-type KnowledgeQuestion = {
-  id: number;
-  text: string;
-  type: QuestionType;
-  options: { id: string; text: string; isCorrect: boolean }[];
-};
-
 const mindsetQuestions: Question[] = [
   {
     id: 1,
