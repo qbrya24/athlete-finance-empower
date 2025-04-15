@@ -69,11 +69,15 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
 
   const renderLessonContent = (content: string) => {
     const paragraphs = content.split('\n\n');
-    return paragraphs.map((paragraph, index) => (
-      <p key={index} className="mb-4 text-slate-700 leading-relaxed">
-        {paragraph}
-      </p>
-    ));
+    return (
+      <div className="space-y-6">
+        {paragraphs.map((paragraph, index) => (
+          <p key={index} className="text-base text-slate-700 leading-relaxed">
+            {paragraph}
+          </p>
+        ))}
+      </div>
+    );
   };
 
   if (loading) {
@@ -89,7 +93,7 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-8 pb-12">
       <div className="flex items-center justify-between">
         <Button
           variant="outline"
@@ -106,10 +110,12 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
       </div>
 
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-slate-900">
+        <h1 className="text-3xl font-bold text-slate-900 mb-4">
           {module.title}
         </h1>
-        <p className="text-slate-600 mt-3 max-w-2xl mx-auto">{module.description}</p>
+        <p className="text-slate-600 max-w-2xl mx-auto">
+          {module.description}
+        </p>
       </div>
 
       <Card className="bg-white border-slate-200 shadow-lg">
@@ -149,12 +155,14 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
             <AccordionItem 
               key={lesson.id} 
               value={`lesson-${lesson.id}`}
-              className="border-slate-200 bg-white rounded-lg overflow-hidden"
+              className="border border-slate-200 bg-white rounded-lg overflow-hidden"
             >
-              <AccordionTrigger className="px-4 py-4 hover:no-underline">
+              <AccordionTrigger className="px-6 py-4 hover:no-underline group">
                 <div className="flex items-start justify-between gap-4 w-full">
                   <div className="flex-1 text-left">
-                    <h3 className="font-medium text-lg text-slate-900">{lesson.title}</h3>
+                    <h3 className="font-medium text-lg text-slate-900 group-hover:text-slate-700">
+                      {lesson.title}
+                    </h3>
                     <p className="text-sm text-slate-600 mt-1">
                       {lesson.description}
                     </p>
@@ -165,8 +173,8 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
                   </div>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="px-4 pb-4">
-                <div className="prose max-w-none">
+              <AccordionContent className="px-6 pb-6">
+                <div className="prose prose-slate max-w-none">
                   {renderLessonContent(lesson.content)}
                 </div>
               </AccordionContent>
