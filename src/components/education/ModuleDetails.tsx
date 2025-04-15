@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
@@ -8,6 +7,7 @@ import { BookOpen, ArrowLeft, CheckCircle, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/providers/AuthProvider';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 type Lesson = {
   id: number;
@@ -66,6 +66,15 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
     fetchModuleDetails();
   }, [moduleId]);
 
+  const renderLessonContent = (content: string) => {
+    const paragraphs = content.split('\n\n');
+    return paragraphs.map((paragraph, index) => (
+      <p key={index} className="mb-4 text-gray-700">
+        {paragraph}
+      </p>
+    ));
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center h-64">
       <div className="text-lg text-green/70">Loading module details...</div>
@@ -84,34 +93,34 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
         <Button
           variant="outline"
           onClick={() => navigate('/education')}
-          className="gap-2 hover:bg-green-50 text-green-900 border-green-200"
+          className="gap-2 hover:bg-slate-50 text-slate-900 border-slate-200"
         >
-          <ArrowLeft className="h-4 w-4 text-green-800" />
+          <ArrowLeft className="h-4 w-4 text-slate-800" />
           Back to Modules
         </Button>
-        <div className="flex items-center gap-2 text-sm text-green-900 bg-green-100 px-3 py-1.5 rounded-full">
-          <Clock className="h-4 w-4 text-green-800" />
+        <div className="flex items-center gap-2 text-sm text-slate-900 bg-slate-100 px-3 py-1.5 rounded-full">
+          <Clock className="h-4 w-4 text-slate-800" />
           {module.duration}
         </div>
       </div>
 
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-green-900">
+        <h1 className="text-3xl font-bold text-slate-900">
           {module.title}
         </h1>
-        <p className="text-green-800 mt-3 max-w-2xl mx-auto">{module.description}</p>
+        <p className="text-slate-600 mt-3 max-w-2xl mx-auto">{module.description}</p>
       </div>
 
-      <Card className="bg-white/90 border-green-200 shadow-lg">
+      <Card className="bg-white border-slate-200 shadow-lg">
         <CardHeader>
-          <h2 className="text-xl font-semibold text-green-900">Learning Objectives</h2>
+          <h2 className="text-xl font-semibold text-slate-900">Learning Objectives</h2>
         </CardHeader>
         <CardContent>
           <ul className="grid gap-4 md:grid-cols-2">
             {module.learning_objectives.map((objective: string, index: number) => (
-              <li key={index} className="flex items-start gap-3 bg-green-50 p-4 rounded-lg">
-                <CheckCircle className="h-5 w-5 text-green-700 shrink-0 mt-0.5" />
-                <span className="text-green-900">{objective}</span>
+              <li key={index} className="flex items-start gap-3 bg-slate-50 p-4 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-slate-700 shrink-0 mt-0.5" />
+                <span className="text-slate-700">{objective}</span>
               </li>
             ))}
           </ul>
@@ -120,10 +129,10 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
 
       <div>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-green-900">Course Content</h2>
-          <div className="flex items-center gap-2 bg-green-100 px-3 py-1.5 rounded-full">
-            <BookOpen className="h-4 w-4 text-green-800" />
-            <span className="text-sm text-green-900">
+          <h2 className="text-xl font-semibold text-slate-900">Course Content</h2>
+          <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-full">
+            <BookOpen className="h-4 w-4 text-slate-800" />
+            <span className="text-sm text-slate-900">
               {lessons.length} lessons
             </span>
           </div>
@@ -131,29 +140,38 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
 
         <Progress
           value={progress}
-          className="h-2 mb-8 bg-green-200"
+          className="h-2 mb-8 bg-slate-200"
         />
 
-        <div className="grid gap-4">
+        <Accordion type="single" collapsible className="space-y-4">
           {lessons.map((lesson) => (
-            <Card key={lesson.id} className="transition-all duration-300 hover:shadow-md hover:scale-[1.01] border-green-200 bg-white/90">
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <h3 className="font-medium text-lg text-green-900">{lesson.title}</h3>
-                    <p className="text-sm text-green-800 mt-1">
+            <AccordionItem 
+              key={lesson.id} 
+              value={`lesson-${lesson.id}`}
+              className="border-slate-200 bg-white rounded-lg overflow-hidden"
+            >
+              <AccordionTrigger className="px-4 py-4 hover:no-underline">
+                <div className="flex items-start justify-between gap-4 w-full">
+                  <div className="flex-1 text-left">
+                    <h3 className="font-medium text-lg text-slate-900">{lesson.title}</h3>
+                    <p className="text-sm text-slate-600 mt-1">
                       {lesson.description}
                     </p>
                   </div>
-                  <div className="text-sm text-green-900 flex items-center gap-2 whitespace-nowrap bg-green-100 px-3 py-1.5 rounded-full">
-                    <Clock className="h-4 w-4 text-green-800" />
+                  <div className="text-sm text-slate-900 flex items-center gap-2 whitespace-nowrap bg-slate-100 px-3 py-1.5 rounded-full">
+                    <Clock className="h-4 w-4 text-slate-800" />
                     {lesson.duration}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pb-4">
+                <div className="prose max-w-none">
+                  {renderLessonContent(lesson.content)}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       </div>
     </div>
   );
