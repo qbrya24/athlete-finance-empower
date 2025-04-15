@@ -1,9 +1,11 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react';
 import FadeIn from '@/components/animations/FadeIn';
 import ResultsScreen from '@/components/onboarding/ResultsScreen';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/providers/AuthProvider';
+import { toast } from '@/components/ui/use-toast';
 
 type QuestionType = 'mindset' | 'knowledge';
 
@@ -340,6 +342,7 @@ const calculateFinancialLiteracyScore = (answers: Record<number, string>) => {
 
 const QuestionnaireForm: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [mindsetAnswers, setMindsetAnswers] = useState<Record<number, number>>({});
   const [knowledgeAnswers, setKnowledgeAnswers] = useState<Record<number, string>>({});
@@ -367,24 +370,56 @@ const QuestionnaireForm: React.FC = () => {
   
   const isKnowledgeQuestion = currentQuestion?.type === 'knowledge';
   
-  const handleMindsetAnswer = (value: number) => {
+  const saveResponse = async (questionId: number, response: string | number) => {
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to save responses.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('questionnaire_responses')
+        .insert({
+          user_id: user.id,
+          question_id: questionId,
+          response: response.toString()
+        });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error saving response:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save your response. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleMindsetAnswer = async (value: number) => {
     const newAnswers = { ...mindsetAnswers, [currentQuestion.id]: value };
     setMindsetAnswers(newAnswers);
     
+    await saveResponse(currentQuestion.id, value);
+    
     if (currentQuestionIndex < totalQuestions - 1) {
-      // Slight delay before moving to next question for a smooth transition
       setTimeout(() => {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
       }, 300);
     }
   };
   
-  const handleKnowledgeAnswer = (optionId: string) => {
+  const handleKnowledgeAnswer = async (optionId: string) => {
     const newAnswers = { ...knowledgeAnswers, [currentQuestion.id]: optionId };
     setKnowledgeAnswers(newAnswers);
     
+    await saveResponse(currentQuestion.id, optionId);
+    
     if (currentQuestionIndex < totalQuestions - 1) {
-      // Slight delay before moving to next question for a smooth transition
       setTimeout(() => {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
       }, 300);
