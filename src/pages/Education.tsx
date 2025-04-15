@@ -4,7 +4,7 @@ import { useAuth } from '@/providers/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 import AppLayout from '@/components/layout/AppLayout';
 import FadeIn from '@/components/animations/FadeIn';
-import { BookOpen, Check, Clock, ArrowRight, PlayCircle } from 'lucide-react';
+import { BookOpen, Check, Clock, ArrowRight } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { Progress } from '@/components/ui/progress';
 
@@ -34,22 +34,24 @@ const Education = () => {
         .select('*')
         .order('order_index');
 
-      // Fetch user progress
-      const { data: progressData, error: progressError } = await supabase
-        .from('user_education_progress')
-        .select('module_id, progress')
-        .eq('user_id', user?.id);
-
       if (modulesError) throw modulesError;
-      if (progressError) throw progressError;
-
       setModules(modulesData || []);
       
-      const progressMap: UserProgress = {};
-      progressData?.forEach(item => {
-        progressMap[item.module_id] = item.progress || 0;
-      });
-      setUserProgress(progressMap);
+      // Only fetch user progress if user is logged in
+      if (user) {
+        const { data: progressData, error: progressError } = await supabase
+          .from('user_education_progress')
+          .select('module_id, progress')
+          .eq('user_id', user.id);
+  
+        if (progressError) throw progressError;
+        
+        const progressMap: UserProgress = {};
+        progressData?.forEach(item => {
+          progressMap[item.module_id] = item.progress || 0;
+        });
+        setUserProgress(progressMap);
+      }
     } catch (error) {
       console.error('Error fetching modules:', error);
       toast({
@@ -63,9 +65,7 @@ const Education = () => {
   };
 
   useEffect(() => {
-    if (user) {
-      fetchModulesAndProgress();
-    }
+    fetchModulesAndProgress();
   }, [user]);
 
   const handleStartModule = async (moduleId: number) => {
@@ -138,7 +138,7 @@ const Education = () => {
             </div>
             
             <Progress 
-              value={(Object.values(userProgress).filter(p => p === 100).length / modules.length) * 100} 
+              value={(Object.values(userProgress).filter(p => p === 100).length / Math.max(1, modules.length)) * 100} 
               className="w-full h-2 bg-gray-100 rounded-full mb-4" 
             />
             
