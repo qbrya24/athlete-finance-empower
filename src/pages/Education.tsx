@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
@@ -127,13 +128,13 @@ const Education = () => {
             <FadeIn className="mb-12">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
                 <div>
-                  <span className="inline-block px-3 py-1 bg-green/10 text-green rounded-full text-xs font-medium mb-2">
+                  <span className="inline-block px-3 py-1 bg-green/20 text-green-700 rounded-full text-xs font-medium mb-2">
                     Education
                   </span>
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-green to-green/70 bg-clip-text text-transparent">
+                  <h1 className="text-4xl font-bold text-green-900">
                     Final Whistle Wealth
                   </h1>
-                  <p className="text-green/70 mt-2 text-lg">
+                  <p className="text-green-700 mt-2 text-lg">
                     Personalized financial education for athletes
                   </p>
                 </div>
@@ -141,11 +142,11 @@ const Education = () => {
             </FadeIn>
 
             <FadeIn delay={100} className="mb-10">
-              <Card className="bg-white/50 backdrop-blur border-green/10 shadow-lg p-6">
+              <Card className="bg-white/80 backdrop-blur border-green/20 shadow-lg p-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                  <h2 className="text-xl font-semibold">Your Learning Progress</h2>
-                  <div className="text-green/70 flex items-center gap-2 bg-green/5 px-3 py-1.5 rounded-full">
-                    <BookOpen className="w-4 h-4 text-green" />
+                  <h2 className="text-xl font-semibold text-green-900">Your Learning Progress</h2>
+                  <div className="text-green-800 flex items-center gap-2 bg-green/10 px-3 py-1.5 rounded-full">
+                    <BookOpen className="w-4 h-4 text-green-700" />
                     <span>
                       {Object.values(userProgress).filter(p => p === 100).length} of {modules.length} modules completed
                     </span>
@@ -162,16 +163,16 @@ const Education = () => {
                     <div key={module.id} className="flex items-center">
                       <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-3 transition-colors ${
                         userProgress[module.id] === 100 
-                          ? 'bg-green text-white' 
-                          : 'bg-green/10 text-green'
+                          ? 'bg-green-700 text-white' 
+                          : 'bg-green/20 text-green-800'
                       }`}>
                         {userProgress[module.id] === 100 ? <Check className="w-5 h-5" /> : module.order_index}
                       </div>
                       <div>
-                        <div className={`font-medium ${userProgress[module.id] > 0 ? 'text-green' : 'text-green/90'}`}>
+                        <div className={`font-medium ${userProgress[module.id] > 0 ? 'text-green-900' : 'text-green-800'}`}>
                           {module.title}
                         </div>
-                        <div className="text-sm text-green/70">
+                        <div className="text-sm text-green-700">
                           {userProgress[module.id] || 0}% complete
                         </div>
                       </div>
@@ -183,31 +184,31 @@ const Education = () => {
 
             <div className="mb-12">
               <FadeIn delay={200}>
-                <h2 className="text-2xl font-semibold mb-6">Learning Modules</h2>
+                <h2 className="text-2xl font-semibold mb-6 text-green-900">Learning Modules</h2>
               </FadeIn>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {modules.map((module) => (
                   <FadeIn key={module.id} delay={300 + module.order_index * 100}>
-                    <Card className="bg-white/50 backdrop-blur border-green/10 shadow-lg h-full transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
+                    <Card className="bg-white/80 backdrop-blur border-green/20 shadow-lg h-full transition-all duration-300 hover:shadow-xl hover:scale-[1.02]">
                       <div className="p-6 flex flex-col h-full">
-                        <h3 className="text-xl font-semibold mb-3">{module.title}</h3>
-                        <p className="text-green/70 mb-6">{module.description}</p>
+                        <h3 className="text-xl font-semibold mb-3 text-green-900">{module.title}</h3>
+                        <p className="text-green-800 mb-6">{module.description}</p>
                         
                         <div className="flex items-center gap-4 mb-6">
-                          <div className="flex items-center text-sm text-green/70 bg-green/5 px-3 py-1.5 rounded-full">
-                            <BookOpen className="w-4 h-4 mr-1" />
+                          <div className="flex items-center text-sm text-green-800 bg-green/10 px-3 py-1.5 rounded-full">
+                            <BookOpen className="w-4 h-4 mr-1 text-green-700" />
                             {module.lessons_count} lessons
                           </div>
-                          <div className="flex items-center text-sm text-green/70 bg-green/5 px-3 py-1.5 rounded-full">
-                            <Clock className="w-4 h-4 mr-1" />
+                          <div className="flex items-center text-sm text-green-800 bg-green/10 px-3 py-1.5 rounded-full">
+                            <Clock className="w-4 h-4 mr-1 text-green-700" />
                             {module.duration}
                           </div>
                         </div>
                         
                         {userProgress[module.id] > 0 && (
                           <>
-                            <div className="text-sm text-green/70 mb-2">
+                            <div className="text-sm text-green-700 mb-2">
                               {userProgress[module.id]}% completed
                             </div>
                             <Progress 
@@ -223,10 +224,10 @@ const Education = () => {
                             className={`
                               w-full py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300
                               ${userProgress[module.id] > 0 && userProgress[module.id] < 100
-                                ? 'bg-green text-white hover:bg-green/90' 
+                                ? 'bg-green-700 text-white hover:bg-green-800' 
                                 : userProgress[module.id] === 100 
-                                  ? 'border border-green/20 text-green hover:bg-green/5'
-                                  : 'bg-green text-white hover:bg-green/90'
+                                  ? 'border border-green-700 text-green-900 hover:bg-green/10'
+                                  : 'bg-green-700 text-white hover:bg-green-800'
                               }
                             `}
                           >
@@ -240,12 +241,12 @@ const Education = () => {
                           </button>
                         </div>
 
-                        <div className="mt-6 pt-6 border-t border-green/10">
-                          <h4 className="text-sm font-semibold mb-3">Learning Objectives:</h4>
+                        <div className="mt-6 pt-6 border-t border-green/20">
+                          <h4 className="text-sm font-semibold mb-3 text-green-900">Learning Objectives:</h4>
                           <ul className="space-y-2">
                             {module.learning_objectives.map((objective, index) => (
-                              <li key={index} className="flex items-start text-sm text-green/70">
-                                <CheckCircle className="w-4 h-4 mr-2 mt-1 text-green/70" />
+                              <li key={index} className="flex items-start text-sm text-green-800">
+                                <CheckCircle className="w-4 h-4 mr-2 mt-1 text-green-700" />
                                 {objective}
                               </li>
                             ))}
