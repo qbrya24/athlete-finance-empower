@@ -9,6 +9,74 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      education_lessons: {
+        Row: {
+          content: string
+          description: string
+          duration: string
+          id: number
+          module_id: number
+          order_index: number
+          title: string
+        }
+        Insert: {
+          content: string
+          description: string
+          duration: string
+          id: number
+          module_id: number
+          order_index: number
+          title: string
+        }
+        Update: {
+          content?: string
+          description?: string
+          duration?: string
+          id?: number
+          module_id?: number
+          order_index?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "education_lessons_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "education_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      education_modules: {
+        Row: {
+          description: string
+          duration: string
+          id: number
+          learning_objectives: string[]
+          lessons_count: number
+          order_index: number
+          title: string
+        }
+        Insert: {
+          description: string
+          duration: string
+          id: number
+          learning_objectives: string[]
+          lessons_count: number
+          order_index: number
+          title: string
+        }
+        Update: {
+          description?: string
+          duration?: string
+          id?: number
+          learning_objectives?: string[]
+          lessons_count?: number
+          order_index?: number
+          title?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
