@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react';
-import FadeIn from '@/components/animations/FadeIn';
 import ResultsScreen from '@/components/onboarding/ResultsScreen';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/providers/AuthProvider';
 import { toast } from '@/components/ui/use-toast';
+import { Question, KnowledgeQuestion, AnswerOption } from './types';
+import QuestionCard from './questionnaire/QuestionCard';
+import AnswerOptions from './questionnaire/AnswerOptions';
+import ProgressBar from './questionnaire/ProgressBar';
 
 type QuestionType = 'mindset' | 'knowledge';
 
@@ -273,7 +276,6 @@ const knowledgeQuestions: KnowledgeQuestion[] = [
   }
 ];
 
-// Reorder questions - knowledge questions first, then mindset questions
 const allQuestions = [...knowledgeQuestions, ...mindsetQuestions];
 
 const answerOptions: AnswerOption[] = [
@@ -285,29 +287,24 @@ const answerOptions: AnswerOption[] = [
 ];
 
 const calculateProfile = (mindsetAnswers: Record<number, number>) => {
-  // Analyze savings tendency (questions 1, 5, 9, 12, 15)
   const saverQuestions = [1, 5, 9, 12, 15];
   const saverScore = saverQuestions.reduce((sum, qId) => 
     sum + (mindsetAnswers[qId] || 0), 0) / saverQuestions.length;
   
-  // Analyze spending tendency (questions 4, 7, 10)
   const spenderQuestions = [4, 7, 10];
   const spenderScore = spenderQuestions.reduce((sum, qId) => 
     sum + (mindsetAnswers[qId] || 0), 0) / spenderQuestions.length;
   
-  // Analyze investing mindset (questions 2, 6, 11, 14)
   const investorQuestions = [2, 6, 11, 14];
   const investorScore = investorQuestions.reduce((sum, qId) => 
     sum + (mindsetAnswers[qId] || 0), 0) / investorQuestions.length;
   
-  // Determine primary profile (highest score)
   const scores = [
     { type: 'Saver', score: saverScore },
     { type: 'Spender', score: spenderScore },
     { type: 'Investor', score: investorScore }
   ];
   
-  // Sort by score (highest first)
   scores.sort((a, b) => b.score - a.score);
   
   return {
@@ -441,7 +438,6 @@ const QuestionnaireForm: React.FC = () => {
   const handleSubmit = () => {
     setIsSubmitting(true);
     
-    // Calculate scores and profiles
     const literacyScore = calculateFinancialLiteracyScore(knowledgeAnswers);
     const profile = calculateProfile(mindsetAnswers);
     
@@ -450,13 +446,11 @@ const QuestionnaireForm: React.FC = () => {
       profile
     });
     
-    // Save answers to localStorage for later use
     localStorage.setItem('mindsetQuestionnaire', JSON.stringify(mindsetAnswers));
     localStorage.setItem('knowledgeQuestionnaire', JSON.stringify(knowledgeAnswers));
     localStorage.setItem('financialLiteracyScore', JSON.stringify(literacyScore));
     localStorage.setItem('financialProfile', JSON.stringify(profile));
     
-    // Show results after a short delay
     setTimeout(() => {
       setIsSubmitting(false);
       setShowResults(true);
@@ -474,103 +468,33 @@ const QuestionnaireForm: React.FC = () => {
   
   const hasAnsweredAll = Object.keys(mindsetAnswers).length + Object.keys(knowledgeAnswers).length === totalQuestions;
   
-  // If we're showing results, render the results screen
   if (showResults && results) {
     return <ResultsScreen results={results} onFinish={handleFinish} />;
   }
   
-  // Render multiple choice options for knowledge questions
-  const renderKnowledgeOptions = () => {
-    const current = currentQuestion as KnowledgeQuestion;
-    return (
-      <div className="space-y-3">
-        {current.options.map((option) => (
-          <button
-            key={option.id}
-            onClick={() => handleKnowledgeAnswer(option.id)}
-            className={`
-              w-full p-4 flex items-center rounded-lg border text-left
-              transition-all duration-200 hover:bg-green-50
-              ${knowledgeAnswers[current.id] === option.id 
-                ? 'bg-green-50 border-green text-green' 
-                : 'bg-white border-gray-200 text-gray-700'}
-            `}
-          >
-            <div className={`
-              w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center
-              ${knowledgeAnswers[current.id] === option.id 
-                ? 'border-green' 
-                : 'border-gray-300'}
-            `}>
-              {knowledgeAnswers[current.id] === option.id && (
-                <div className="w-2.5 h-2.5 rounded-full bg-green" />
-              )}
-            </div>
-            {option.id}. {option.text}
-          </button>
-        ))}
-      </div>
-    );
-  };
-  
-  // Render mindset answer options (scale 1-5)
-  const renderMindsetOptions = () => {
-    return (
-      <div className="space-y-3">
-        {answerOptions.map((option) => (
-          <button
-            key={option.value}
-            onClick={() => handleMindsetAnswer(option.value)}
-            className={`
-              w-full p-4 flex items-center rounded-lg border text-left
-              transition-all duration-200 hover:bg-green-50
-              ${mindsetAnswers[currentQuestion.id] === option.value 
-                ? 'bg-green-50 border-green text-green' 
-                : 'bg-white border-gray-200 text-gray-700'}
-            `}
-          >
-            <div className={`
-              w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center
-              ${mindsetAnswers[currentQuestion.id] === option.value 
-                ? 'border-green' 
-                : 'border-gray-300'}
-            `}>
-              {mindsetAnswers[currentQuestion.id] === option.value && (
-                <div className="w-2.5 h-2.5 rounded-full bg-green" />
-              )}
-            </div>
-            {option.label}
-          </button>
-        ))}
-      </div>
-    );
-  };
-  
   return (
     <div className="w-full max-w-2xl mx-auto">
-      {/* Progress bar */}
-      <div className="w-full h-2 bg-gray-100 rounded-full mb-8">
-        <div 
-          className="h-full bg-green rounded-full transition-all duration-500 ease-out"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
+      <ProgressBar progress={progress} />
       
-      <div className="text-sm text-green/70 mb-2">
-        Question {currentQuestionIndex + 1} of {totalQuestions}
-      </div>
+      <QuestionCard
+        question={currentQuestion}
+        currentIndex={currentQuestionIndex}
+        totalQuestions={totalQuestions}
+      />
       
-      {/* Question */}
-      <FadeIn key={currentQuestion.id} className="mb-8">
-        <h3 className="text-xl md:text-2xl font-medium mb-8">
-          {currentQuestion.text}
-        </h3>
-        
-        {/* Answer options - different for knowledge vs mindset questions */}
-        {isKnowledgeQuestion ? renderKnowledgeOptions() : renderMindsetOptions()}
-      </FadeIn>
+      <AnswerOptions
+        question={currentQuestion}
+        answerOptions={answerOptions}
+        currentAnswer={isKnowledgeQuestion ? knowledgeAnswers[currentQuestion.id] : mindsetAnswers[currentQuestion.id]}
+        onAnswer={(value) => {
+          if (isKnowledgeQuestion) {
+            handleKnowledgeAnswer(value as string);
+          } else {
+            handleMindsetAnswer(value as number);
+          }
+        }}
+      />
       
-      {/* Navigation buttons */}
       <div className="flex justify-between mt-10">
         <button
           onClick={handlePrevious}
