@@ -7,8 +7,8 @@ import { BookOpen, Check, Clock, ArrowRight } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { Progress } from '@/components/ui/progress';
 import ModuleDetails from '@/components/education/ModuleDetails';
-import Card from '@/components/ui/Card';
-import CheckCircle from '@/components/icons/CheckCircle';
+import { Card } from '@/components/ui/card';
+import { CheckCircle } from 'lucide-react';
 
 type Module = {
   id: number;
