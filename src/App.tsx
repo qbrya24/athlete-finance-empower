@@ -12,7 +12,6 @@ import Dashboard from "./pages/Dashboard";
 import Education from "./pages/Education";
 import FinancialTools from "./pages/FinancialTools";
 import News from "./pages/News";
-import BankConnections from "./pages/BankConnections";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 
@@ -33,7 +32,6 @@ const App = () => (
             <Route path="/education" element={<Education />} />
             <Route path="/financial-tools" element={<FinancialTools />} />
             <Route path="/news" element={<News />} />
-            <Route path="/bank-connections" element={<BankConnections />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -1,7 +1,6 @@
-
 import React, { ReactNode, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Book, BarChart3, Newspaper as NewspaperIcon, Settings, Menu, X, CreditCard } from 'lucide-react';
+import { Home, Book, BarChart3, Newspaper as NewspaperIcon, Settings, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '@/components/ui/Logo';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -53,7 +52,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     { name: 'Home', path: '/dashboard', icon: <Home className="w-5 h-5" /> },
     { name: 'Education', path: '/education', icon: <Book className="w-5 h-5" /> },
     { name: 'Financial Tools', path: '/financial-tools', icon: <BarChart3 className="w-5 h-5" /> },
-    { name: 'Bank Connections', path: '/bank-connections', icon: <CreditCard className="w-5 h-5" /> },
     { name: 'News', path: '/news', icon: <NewspaperIcon className="w-5 h-5" /> },
   ];
 

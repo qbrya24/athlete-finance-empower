@@ -1,12 +1,24 @@
 
 import React, { useState } from 'react';
-import { Bell, Lock, User, CreditCard, HelpCircle, FileText, LogOut, ChevronRight, Shield, BarChart } from 'lucide-react';
+import { Bell, Lock, User, CreditCard, HelpCircle, FileText, LogOut, ChevronRight, Shield, BarChart, Building, Wallet, Link2 } from 'lucide-react';
 import AppLayout from '@/components/layout/AppLayout';
 import { useToast } from '@/hooks/use-toast';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAuth } from '@/providers/AuthProvider';
+import { PlaidLinkOnSuccessMetadata } from 'react-plaid-link';
+import { supabase } from '@/integrations/supabase/client';
+import PlaidLink from '@/components/plaid/PlaidLink';
+import BankAccounts from '@/components/plaid/BankAccounts';
+import { PlaidAccount } from '@/services/plaid';
+import FadeIn from '@/components/animations/FadeIn';
 
 const Settings = () => {
   const [darkMode, setDarkMode] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState<PlaidAccount | null>(null);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   
   const handleLogout = () => {
     toast({
@@ -15,6 +27,58 @@ const Settings = () => {
     });
     // Actual logout logic would go here
   };
+
+  const handlePlaidSuccess = async (publicToken: string, metadata: PlaidLinkOnSuccessMetadata) => {
+    console.log('Public token received', publicToken);
+    setIsConnecting(true);
+    
+    try {
+      const { error } = await supabase.functions.invoke('plaid-exchange-token', {
+        body: { 
+          public_token: publicToken,
+          institution: {
+            name: metadata.institution?.name,
+            id: metadata.institution?.institution_id
+          }
+        }
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: 'Success!',
+        description: `Successfully connected to ${metadata.institution?.name}`,
+      });
+      
+      // Force refresh of account data
+      window.location.reload();
+    } catch (err) {
+      console.error('Error exchanging token:', err);
+      toast({
+        title: 'Connection Failed',
+        description: 'There was a problem connecting your account. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const handleAccountSelect = (account: PlaidAccount) => {
+    setSelectedAccount(account);
+    toast({
+      title: 'Account Selected',
+      description: `You selected ${account.name}`,
+    });
+  };
+
+  const toggleSection = (section: string) => {
+    if (activeSection === section) {
+      setActiveSection(null);
+    } else {
+      setActiveSection(section);
+    }
+  }
   
   return (
     <AppLayout>
@@ -48,13 +112,43 @@ const Settings = () => {
                   <ChevronRight className="w-5 h-5 text-gray-400" />
                 </div>
                 
-                <div className="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer">
+                <div 
+                  className="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer"
+                  onClick={() => toggleSection('bankConnections')}
+                >
                   <div className="flex items-center">
                     <CreditCard className="w-5 h-5 text-green-500 mr-3" />
                     <span>Connected Accounts</span>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                  <ChevronRight className={`w-5 h-5 text-gray-400 transform transition-transform ${activeSection === 'bankConnections' ? 'rotate-90' : ''}`} />
                 </div>
+                
+                {activeSection === 'bankConnections' && (
+                  <div className="mt-2 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <h3 className="text-md font-medium mb-3">Your Connected Bank Accounts</h3>
+                    
+                    <BankAccounts 
+                      userId={user?.id} 
+                      onAccountSelect={handleAccountSelect} 
+                    />
+                    
+                    <div className="mt-4">
+                      <PlaidLink 
+                        onSuccess={handlePlaidSuccess}
+                        buttonText={isConnecting ? "Connecting..." : "Connect a New Account"}
+                        className="w-full justify-center text-sm"
+                      />
+                    </div>
+                    
+                    <div className="mt-4 p-3 bg-green-50 rounded-lg text-sm">
+                      <div className="flex items-start mb-3">
+                        <Building className="w-4 h-4 text-green-600 mt-0.5 mr-2" />
+                        <p className="text-green-700">Connect your financial accounts securely using Plaid.</p>
+                      </div>
+                      <p className="text-xs text-green-600">Your data is encrypted and secure. We never store your banking credentials.</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
             
