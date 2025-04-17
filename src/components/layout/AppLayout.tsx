@@ -4,7 +4,6 @@ import { Home, Book, BarChart3, Newspaper as NewspaperIcon, Settings, Menu, X } 
 import { cn } from '@/lib/utils';
 import Logo from '@/components/ui/Logo';
 import { useIsMobile } from '@/hooks/use-mobile';
-import SettingsButton from './SettingsButton';
 import UserProfile from '@/components/user/UserProfile';
 
 interface AppLayoutProps {
@@ -100,6 +99,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
               >
                 <span className="flex items-center gap-2">
                   {item.icon}
+                  {item.name}
                 </span>
               </button>
             ))}
@@ -154,6 +154,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
               aria-current={isActive(item.path) ? "page" : undefined}
             >
               {item.icon}
+              {item.name}
             </button>
           ))}
         </div>
@@ -173,6 +174,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             aria-current={isActive(item.path) ? "page" : undefined}
           >
             {item.icon}
+            <span className="text-xs mt-1 font-medium truncate max-w-[80px]">{item.name}</span>
           </button>
         ))}
         <button
