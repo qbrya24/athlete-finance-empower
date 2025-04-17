@@ -53,7 +53,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     { name: 'Education', path: '/education', icon: <Book className="w-5 h-5" /> },
     { name: 'Financial Tools', path: '/financial-tools', icon: <BarChart3 className="w-5 h-5" /> },
     { name: 'News', path: '/news', icon: <NewspaperIcon className="w-5 h-5" /> },
-    { name: 'Settings', path: '/settings', icon: <Settings className="w-5 h-5" /> },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -92,7 +91,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
                 key={item.name}
                 onClick={() => navigate(item.path)}
                 className={cn(
-                  "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                  "px-4 py-2 rounded-lg text-sm font-medium transition-all group",
                   isActive(item.path) 
                     ? "text-green-700 bg-green-50 shadow-sm" 
                     : "text-green-600/70 hover:bg-green-50/50 hover:text-green-700"
@@ -101,10 +100,23 @@ const AppLayout: React.FC<AppLayoutProps> = ({
               >
                 <span className="flex items-center gap-2">
                   {item.icon}
-                  {item.name}
                 </span>
               </button>
             ))}
+            <button
+              onClick={() => navigate('/settings')}
+              className={cn(
+                "px-4 py-2 rounded-lg text-sm font-medium transition-all group",
+                isActive('/settings') 
+                  ? "text-green-700 bg-green-50 shadow-sm" 
+                  : "text-green-600/70 hover:bg-green-50/50 hover:text-green-700"
+              )}
+              aria-current={isActive('/settings') ? "page" : undefined}
+            >
+              <span className="flex items-center gap-2">
+                <Settings className="w-5 h-5" />
+              </span>
+            </button>
           </nav>
         </div>
       </header>
@@ -142,7 +154,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
               aria-current={isActive(item.path) ? "page" : undefined}
             >
               {item.icon}
-              {item.name}
             </button>
           ))}
         </div>
@@ -162,9 +173,20 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             aria-current={isActive(item.path) ? "page" : undefined}
           >
             {item.icon}
-            <span className="text-xs mt-1 font-medium truncate max-w-[80px]">{item.name}</span>
           </button>
         ))}
+        <button
+          onClick={() => navigate('/settings')}
+          className={cn(
+            "flex flex-col items-center justify-center py-2 px-1 w-full transition-colors",
+            isActive('/settings') 
+              ? "text-green-700 bg-green-50/60" 
+              : "text-green-600/60"
+          )}
+          aria-current={isActive('/settings') ? "page" : undefined}
+        >
+          <Settings className="w-5 h-5" />
+        </button>
       </div>
 
       <main className={cn(
