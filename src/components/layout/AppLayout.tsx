@@ -5,6 +5,7 @@ import { Home, Book, BarChart3, Newspaper as NewspaperIcon, Menu, X } from 'luci
 import { cn } from '@/lib/utils';
 import Logo from '@/components/ui/Logo';
 import { useIsMobile } from '@/hooks/use-mobile';
+import SettingsButton from './SettingsButton';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -75,13 +76,16 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         <div className="container mx-auto flex justify-between items-center">
           <Logo size="sm" variant={isMobile ? "icon" : "full"} />
           
-          <button 
-            className="md:hidden text-green p-2 mobile-touch-target"
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-          >
-            {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="flex items-center gap-2">
+            <SettingsButton />
+            <button 
+              className="md:hidden text-green p-2 mobile-touch-target"
+              onClick={toggleMenu}
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
           
           <nav className="hidden md:flex items-center space-x-1">
             {navigation.map((item) => (
