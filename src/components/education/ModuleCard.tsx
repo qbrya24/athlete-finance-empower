@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { BookOpen, Clock, ArrowRight, CheckCircle } from 'lucide-react';
+import { BookOpen, Clock, ArrowRight, CheckCircle, Video, HelpCircle } from 'lucide-react';
 import FadeIn from '@/components/animations/FadeIn';
 
 type ModuleCardProps = {
@@ -14,6 +14,8 @@ type ModuleCardProps = {
     lessons_count: number;
     learning_objectives: string[];
     order_index: number;
+    has_videos?: boolean;
+    has_quizzes?: boolean;
   };
   progress: number;
   onStartModule: (moduleId: number) => void;
@@ -27,7 +29,7 @@ const ModuleCard = ({ module, progress, onStartModule }: ModuleCardProps) => {
           <h3 className="text-xl font-semibold mb-3 text-green-900">{module.title}</h3>
           <p className="text-green-800 mb-6">{module.description}</p>
           
-          <div className="flex items-center gap-4 mb-6">
+          <div className="flex flex-wrap items-center gap-2 mb-6">
             <div className="flex items-center text-sm text-green-900 bg-green-100 px-3 py-1.5 rounded-full">
               <BookOpen className="w-4 h-4 mr-1 text-green-800" />
               {module.lessons_count} lessons
@@ -36,6 +38,18 @@ const ModuleCard = ({ module, progress, onStartModule }: ModuleCardProps) => {
               <Clock className="w-4 h-4 mr-1 text-green-800" />
               {module.duration}
             </div>
+            {module.has_videos && (
+              <div className="flex items-center text-sm text-green-900 bg-green-100 px-3 py-1.5 rounded-full">
+                <Video className="w-4 h-4 mr-1 text-green-800" />
+                Videos
+              </div>
+            )}
+            {module.has_quizzes && (
+              <div className="flex items-center text-sm text-green-900 bg-green-100 px-3 py-1.5 rounded-full">
+                <HelpCircle className="w-4 h-4 mr-1 text-green-800" />
+                Quizzes
+              </div>
+            )}
           </div>
           
           {progress > 0 && (
