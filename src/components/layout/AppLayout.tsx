@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import Logo from '@/components/ui/Logo';
 import { useIsMobile } from '@/hooks/use-mobile';
 import SettingsButton from './SettingsButton';
+import UserProfile from '@/components/user/UserProfile';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -77,6 +78,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           <Logo size="sm" variant={isMobile ? "icon" : "full"} />
           
           <div className="flex items-center gap-2">
+            <UserProfile />
             <SettingsButton />
             <button 
               className="md:hidden text-green p-2 mobile-touch-target"
