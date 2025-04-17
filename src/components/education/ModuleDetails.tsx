@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { toast } from '@/components/ui/use-toast';
@@ -41,15 +41,15 @@ type ModuleDetailsProps = {
 };
 
 const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
-  const [module, setModule] = React.useState<any>(null);
-  const [lessons, setLessons] = React.useState<Lesson[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const [module, setModule] = useState<any>(null);
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const [completedLessons, setCompletedLessons] = useState<Record<number, boolean>>({});
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchModuleDetails = async () => {
       try {
         // Fetch module details
@@ -90,10 +90,17 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
           // Group quizzes by lesson_id
           if (quizzesData) {
             quizzesData.forEach(quiz => {
-              // Convert JSONB options to string array
-              const parsedQuiz = {
-                ...quiz,
-                options: Array.isArray(quiz.options) ? quiz.options : []
+              // Convert JSONB options to string array if needed
+              const options = Array.isArray(quiz.options) 
+                ? quiz.options.map(opt => String(opt)) 
+                : [];
+              
+              const parsedQuiz: Quiz = {
+                id: quiz.id,
+                question: quiz.question,
+                options: options,
+                correct_option: quiz.correct_option,
+                explanation: quiz.explanation || ""
               };
               
               if (!lessonQuizzes[quiz.lesson_id]) {
@@ -230,6 +237,12 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
     );
   };
 
+  // Function to render lesson content
+  const renderLessonContent = (content: string) => {
+    // This is a simple implementation - could be enhanced with markdown parsing
+    return <div dangerouslySetInnerHTML={{ __html: content }} />;
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center h-64">
       <div className="text-lg text-slate-600">Loading module details...</div>
@@ -329,7 +342,7 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
                         Includes video lesson
                       </div>
                     )}
-                    {lesson.quiz && lesson.quiz.length > 0 && (
+                    {lesson.quizzes && lesson.quizzes.length > 0 && (
                       <div className="flex items-center mt-1 text-sm text-slate-500">
                         <CheckCircle className="h-3.5 w-3.5 mr-1 text-slate-400" />
                         Includes quiz
@@ -349,10 +362,10 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
                   {renderLessonContent(lesson.content)}
                 </div>
                 
-                {lesson.quiz && lesson.quiz.length > 0 && (
+                {lesson.quizzes && lesson.quizzes.length > 0 && (
                   <div className="mt-8 pt-6 border-t border-slate-200">
                     <LessonQuiz 
-                      quiz={lesson.quiz} 
+                      quiz={lesson.quizzes} 
                       lessonId={lesson.id} 
                       isCompleted={!!completedLessons[lesson.id]}
                       onComplete={(score) => handleLessonQuizComplete(lesson.id, score)}

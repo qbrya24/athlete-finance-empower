@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
@@ -55,8 +54,7 @@ const Education = () => {
       // Get lessons that have quizzes
       const { data: lessonsWithQuizzes, error: quizzesError } = await supabase
         .from('education_quizzes')
-        .select('lesson_id')
-        .distinct();
+        .select('lesson_id');
         
       if (quizzesError) throw quizzesError;
       
