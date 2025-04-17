@@ -1,12 +1,11 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import AppLayout from '@/components/layout/AppLayout';
 import CategoryCard from '@/components/dashboard/CategoryCard';
 import ResourcesSection from '@/components/dashboard/ResourcesSection';
-import BankAccountsWidget from '@/components/dashboard/BankAccountsWidget';
 import FadeIn from '@/components/animations/FadeIn';
 import { BookOpen, BarChart3, Newspaper, TrendingUp, PiggyBank, ArrowUpRight } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
@@ -169,13 +168,6 @@ const Dashboard = () => {
               />
             ))}
           </div>
-        </div>
-        
-        {/* Bank Accounts Widget */}
-        <div className="mb-6 md:mb-8">
-          <FadeIn delay={100}>
-            <BankAccountsWidget />
-          </FadeIn>
         </div>
         
         {/* Resources section */}
