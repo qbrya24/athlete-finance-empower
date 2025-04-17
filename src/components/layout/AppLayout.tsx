@@ -1,7 +1,6 @@
-
 import React, { ReactNode, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Book, BarChart3, Newspaper as NewspaperIcon, Menu, X } from 'lucide-react';
+import { Home, Book, BarChart3, Newspaper as NewspaperIcon, Settings, Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from '@/components/ui/Logo';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -27,20 +26,17 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     setMenuOpen(false);
   }, [location.pathname]);
 
-  // Add meta viewport tag for proper scaling and iPhone optimization
   useEffect(() => {
     const metaViewport = document.querySelector('meta[name="viewport"]');
     if (metaViewport) {
       metaViewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0');
     }
     
-    // iPhone 16:9 optimizations
     const handleResize = () => {
       if (isMobile) {
         document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
         document.documentElement.style.setProperty('--app-width', `${window.innerWidth}px`);
         
-        // Calculate and set viewport height for iPhone 16:9 aspect ratio
         const vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty('--vh', `${vh}px`);
       }
@@ -57,6 +53,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     { name: 'Education', path: '/education', icon: <Book className="w-5 h-5" /> },
     { name: 'Financial Tools', path: '/financial-tools', icon: <BarChart3 className="w-5 h-5" /> },
     { name: 'News', path: '/news', icon: <NewspaperIcon className="w-5 h-5" /> },
+    { name: 'Settings', path: '/settings', icon: <Settings className="w-5 h-5" /> },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -79,7 +76,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           
           <div className="flex items-center space-x-3">
             <UserProfile />
-            <SettingsButton />
+            {isMobile && <SettingsButton />}
             <button 
               className="md:hidden text-green p-2 mobile-touch-target"
               onClick={toggleMenu}
