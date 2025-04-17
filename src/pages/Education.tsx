@@ -40,29 +40,54 @@ const Education = () => {
 
       if (modulesError) throw modulesError;
       
+      if (!modulesData) {
+        setModules([]);
+        return;
+      }
+      
       // For each module, determine if it has videos or quizzes
       const { data: lessonsData, error: lessonsError } = await supabase
         .from('education_lessons')
-        .select('module_id, video_url, quiz(id)');
+        .select('module_id, video_url');
         
       if (lessonsError) throw lessonsError;
       
+      // Get lessons that have quizzes
+      const { data: lessonsWithQuizzes, error: quizzesError } = await supabase
+        .from('education_quizzes')
+        .select('lesson_id')
+        .distinct();
+        
+      if (quizzesError) throw quizzesError;
+      
+      // Create a set of lesson IDs that have quizzes for faster lookup
+      const lessonIdsWithQuizzes = new Set(
+        lessonsWithQuizzes?.map(item => item.lesson_id) || []
+      );
+      
       // Process modules to add video and quiz indicators
-      const processedModules = modulesData?.map(module => {
+      const processedModules = modulesData.map(module => {
         const moduleId = module.id;
         const moduleLessons = lessonsData?.filter(lesson => lesson.module_id === moduleId) || [];
         
         const hasVideos = moduleLessons.some(lesson => lesson.video_url);
-        const hasQuizzes = moduleLessons.some(lesson => lesson.quiz && lesson.quiz.length > 0);
+        
+        // Check if any lessons in this module have quizzes
+        const moduleWithQuizzes = lessonsData
+          ?.filter(lesson => lesson.module_id === moduleId)
+          .some(lesson => {
+            const lessonId = (lesson as any).id; // Handle potential type issue
+            return lessonIdsWithQuizzes.has(lessonId);
+          });
         
         return {
           ...module,
           has_videos: hasVideos,
-          has_quizzes: hasQuizzes
+          has_quizzes: moduleWithQuizzes || false
         };
       });
       
-      setModules(processedModules || []);
+      setModules(processedModules);
       
       if (user) {
         const { data: progressData, error: progressError } = await supabase

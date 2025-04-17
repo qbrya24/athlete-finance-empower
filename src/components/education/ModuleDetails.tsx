@@ -4,12 +4,20 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { toast } from '@/components/ui/use-toast';
 import { Progress } from '@/components/ui/progress';
-import { BookOpen, ArrowLeft, CheckCircle, Clock, Video, PlayCircle } from 'lucide-react';
+import { BookOpen, ArrowLeft, CheckCircle, Clock, Video } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/providers/AuthProvider';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import LessonQuiz from './LessonQuiz';
+
+type Quiz = {
+  id: number;
+  question: string;
+  options: string[];
+  correct_option: number;
+  explanation: string;
+};
 
 type Lesson = {
   id: number;
@@ -18,16 +26,13 @@ type Lesson = {
   duration: string;
   content: string;
   order_index: number;
-  video_url?: string;
-  quiz?: Quiz[];
+  video_url?: string | null;
+  quizzes?: Quiz[];
 };
 
-type Quiz = {
-  id: number;
-  question: string;
-  options: string[];
-  correct_option: number;
-  explanation: string;
+type LessonProgress = {
+  lesson_id: number;
+  completed: boolean;
 };
 
 type ModuleDetailsProps = {
@@ -47,36 +52,77 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
   React.useEffect(() => {
     const fetchModuleDetails = async () => {
       try {
-        const [moduleResponse, lessonsResponse] = await Promise.all([
-          supabase
-            .from('education_modules')
-            .select('*')
-            .eq('id', moduleId)
-            .single(),
-          supabase
-            .from('education_lessons')
-            .select('*, quiz(*)')
-            .eq('module_id', moduleId)
-            .order('order_index')
-        ]);
+        // Fetch module details
+        const { data: moduleData, error: moduleError } = await supabase
+          .from('education_modules')
+          .select('*')
+          .eq('id', moduleId)
+          .single();
 
-        if (moduleResponse.error) throw moduleResponse.error;
-        if (lessonsResponse.error) throw lessonsResponse.error;
-
-        setModule(moduleResponse.data);
-        setLessons(lessonsResponse.data);
+        if (moduleError) throw moduleError;
+        if (!moduleData) throw new Error("Module not found");
         
-        // Fetch completed lessons if user is logged in
+        setModule(moduleData);
+        
+        // Fetch lessons for this module
+        const { data: lessonsData, error: lessonsError } = await supabase
+          .from('education_lessons')
+          .select('*')
+          .eq('module_id', moduleId)
+          .order('order_index');
+          
+        if (lessonsError) throw lessonsError;
+        if (!lessonsData) throw new Error("No lessons found");
+        
+        // Create a map to store quizzes for each lesson
+        const lessonQuizzes: Record<number, Quiz[]> = {};
+        
+        // Fetch quizzes for these lessons
+        const lessonIds = lessonsData.map(lesson => lesson.id);
+        if (lessonIds.length > 0) {
+          const { data: quizzesData, error: quizzesError } = await supabase
+            .from('education_quizzes')
+            .select('*')
+            .in('lesson_id', lessonIds);
+            
+          if (quizzesError) throw quizzesError;
+          
+          // Group quizzes by lesson_id
+          if (quizzesData) {
+            quizzesData.forEach(quiz => {
+              // Convert JSONB options to string array
+              const parsedQuiz = {
+                ...quiz,
+                options: Array.isArray(quiz.options) ? quiz.options : []
+              };
+              
+              if (!lessonQuizzes[quiz.lesson_id]) {
+                lessonQuizzes[quiz.lesson_id] = [];
+              }
+              lessonQuizzes[quiz.lesson_id].push(parsedQuiz);
+            });
+          }
+        }
+        
+        // Combine lessons with their quizzes
+        const enhancedLessons = lessonsData.map(lesson => ({
+          ...lesson,
+          quizzes: lessonQuizzes[lesson.id] || []
+        }));
+        
+        setLessons(enhancedLessons);
+        
+        // Fetch user progress for these lessons if user is logged in
         if (user) {
-          const { data: completedData, error: completedError } = await supabase
+          const { data: progressData, error: progressError } = await supabase
             .from('user_lesson_progress')
             .select('lesson_id, completed')
             .eq('user_id', user.id)
-            .in('lesson_id', lessonsResponse.data.map((lesson: Lesson) => lesson.id));
+            .in('lesson_id', lessonIds);
             
-          if (!completedError && completedData) {
+          if (!progressError && progressData) {
             const completedMap: Record<number, boolean> = {};
-            completedData.forEach((item: {lesson_id: number, completed: boolean}) => {
+            progressData.forEach((item: LessonProgress) => {
               completedMap[item.lesson_id] = item.completed;
             });
             setCompletedLessons(completedMap);
@@ -96,19 +142,6 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
 
     fetchModuleDetails();
   }, [moduleId, user]);
-
-  const renderLessonContent = (content: string) => {
-    const paragraphs = content.split('\n\n');
-    return (
-      <div className="space-y-6">
-        {paragraphs.map((paragraph, index) => (
-          <p key={index} className="text-base text-slate-700 leading-relaxed">
-            {paragraph}
-          </p>
-        ))}
-      </div>
-    );
-  };
 
   const handleLessonQuizComplete = async (lessonId: number, score: number) => {
     if (!user) return;
@@ -134,7 +167,10 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
       
       // Calculate new module progress
       const totalLessons = lessons.length;
-      const completedCount = Object.values(completedLessons).filter(Boolean).length + 1;
+      const completedCount = Object.values({
+        ...completedLessons, 
+        [lessonId]: true
+      }).filter(Boolean).length;
       const newProgress = Math.round((completedCount / totalLessons) * 100);
       
       // Update module progress

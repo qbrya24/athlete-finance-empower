@@ -18,6 +18,7 @@ export type Database = {
           module_id: number
           order_index: number
           title: string
+          video_url: string | null
         }
         Insert: {
           content: string
@@ -27,6 +28,7 @@ export type Database = {
           module_id: number
           order_index: number
           title: string
+          video_url?: string | null
         }
         Update: {
           content?: string
@@ -36,6 +38,7 @@ export type Database = {
           module_id?: number
           order_index?: number
           title?: string
+          video_url?: string | null
         }
         Relationships: [
           {
@@ -76,6 +79,47 @@ export type Database = {
           title?: string
         }
         Relationships: []
+      }
+      education_quizzes: {
+        Row: {
+          correct_option: number
+          created_at: string | null
+          explanation: string | null
+          id: number
+          lesson_id: number | null
+          options: Json
+          question: string
+          updated_at: string | null
+        }
+        Insert: {
+          correct_option: number
+          created_at?: string | null
+          explanation?: string | null
+          id?: number
+          lesson_id?: number | null
+          options: Json
+          question: string
+          updated_at?: string | null
+        }
+        Update: {
+          correct_option?: number
+          created_at?: string | null
+          explanation?: string | null
+          id?: number
+          lesson_id?: number | null
+          options?: Json
+          question?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "education_quizzes_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "education_lessons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -205,6 +249,47 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_lesson_progress: {
+        Row: {
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string | null
+          id: number
+          lesson_id: number | null
+          score: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: number
+          lesson_id?: number | null
+          score?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: number
+          lesson_id?: number | null
+          score?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_lesson_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "education_lessons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
