@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { PlaidLinkOnSuccessMetadata } from 'react-plaid-link';
 import { useToast } from '@/components/ui/use-toast';
@@ -9,7 +8,7 @@ import BankAccounts from '@/components/plaid/BankAccounts';
 import { PlaidAccount } from '@/services/plaid';
 import { useAuth } from '@/providers/AuthProvider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Link2, Wallet, BankIcon } from 'lucide-react';
+import { Loader2, Link2, Wallet, Bank } from 'lucide-react';
 import FadeIn from '@/components/animations/FadeIn';
 
 const BankConnections = () => {
@@ -108,7 +107,7 @@ const BankConnections = () => {
                 <CardContent className="space-y-4">
                   <div className="flex items-start">
                     <div className="bg-green/10 p-2 rounded-full mr-3">
-                      <BankIcon className="w-5 h-5 text-green" />
+                      <Bank className="w-5 h-5 text-green" />
                     </div>
                     <div className="flex-1">
                       <h3 className="text-sm font-medium">Choose Your Bank</h3>
