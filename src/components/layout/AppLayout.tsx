@@ -4,6 +4,7 @@ import { Home, Book, BarChart3, Newspaper as NewspaperIcon, Settings, Menu, X } 
 import { cn } from '@/lib/utils';
 import Logo from '@/components/ui/Logo';
 import { useIsMobile } from '@/hooks/use-mobile';
+import SettingsButton from './SettingsButton';
 import UserProfile from '@/components/user/UserProfile';
 
 interface AppLayoutProps {
