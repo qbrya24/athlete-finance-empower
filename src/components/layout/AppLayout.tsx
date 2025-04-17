@@ -77,7 +77,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         <div className="container mx-auto flex justify-between items-center">
           <Logo size="sm" variant={isMobile ? "icon" : "full"} />
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center space-x-3">
             <UserProfile />
             <SettingsButton />
             <button 
@@ -89,18 +89,18 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             </button>
           </div>
           
-          <nav className="hidden md:flex items-center space-x-1">
+          <nav className="hidden md:flex items-center space-x-2">
             {navigation.map((item) => (
               <button
                 key={item.name}
                 onClick={() => navigate(item.path)}
                 className={cn(
-                  "px-4 py-2 rounded-full text-sm font-medium transition-all",
-                  "hover:bg-green-50 button-hover",
+                  "px-4 py-2 rounded-lg text-sm font-medium transition-all",
                   isActive(item.path) 
-                    ? "text-green bg-green-50" 
-                    : "text-green/70"
+                    ? "text-green-700 bg-green-50 shadow-sm" 
+                    : "text-green-600/70 hover:bg-green-50/50 hover:text-green-700"
                 )}
+                aria-current={isActive(item.path) ? "page" : undefined}
               >
                 <span className="flex items-center gap-2">
                   {item.icon}
@@ -127,7 +127,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           menuOpen ? "translate-y-0" : "-translate-y-full"
         )}
       >
-        <div className="flex flex-col p-3 sm:p-4 space-y-1">
+        <div className="flex flex-col p-2 space-y-1">
           {navigation.map((item) => (
             <button
               key={item.name}
@@ -137,11 +137,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({
               }}
               className={cn(
                 "px-4 py-3 rounded-lg text-left text-base font-medium transition-all mobile-touch-target",
-                "hover:bg-green-50 flex items-center gap-3",
+                "flex items-center gap-3",
                 isActive(item.path) 
-                  ? "text-green bg-green-50" 
-                  : "text-green/70"
+                  ? "text-green-700 bg-green-50 shadow-sm" 
+                  : "text-green-600/70 hover:bg-green-50/50 hover:text-green-700"
               )}
+              aria-current={isActive(item.path) ? "page" : undefined}
             >
               {item.icon}
               {item.name}
@@ -156,14 +157,15 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             key={item.name}
             onClick={() => navigate(item.path)}
             className={cn(
-              "flex flex-col items-center py-3 px-2 w-full mobile-touch-target transition-colors",
+              "flex flex-col items-center justify-center py-2 px-1 w-full transition-colors",
               isActive(item.path) 
-                ? "text-green bg-green-50/50" 
-                : "text-green/60"
+                ? "text-green-700 bg-green-50/60" 
+                : "text-green-600/60"
             )}
+            aria-current={isActive(item.path) ? "page" : undefined}
           >
             {item.icon}
-            <span className="text-xs mt-1 font-medium">{item.name}</span>
+            <span className="text-xs mt-1 font-medium truncate max-w-[80px]">{item.name}</span>
           </button>
         ))}
       </div>
