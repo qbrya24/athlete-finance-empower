@@ -1,7 +1,6 @@
-
 import React from 'react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +9,7 @@ import { useToast } from '@/components/ui/use-toast';
 
 const Auth = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
@@ -19,6 +19,14 @@ const Auth = () => {
     name: '',
     phone: '',
   });
+
+  // Check URL parameters on component mount
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get('signup') === 'true') {
+      setIsSignUp(true);
+    }
+  }, [location.search]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

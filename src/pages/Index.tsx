@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FadeIn } from '@/components/animations/FadeIn';
@@ -20,7 +21,8 @@ const Index = () => {
   const handleUserSelection = (state: 'new' | 'existing') => {
     setUserState(state);
     setTimeout(() => {
-      navigate('/auth');
+      // Pass state information to the auth page using URL search params
+      navigate(`/auth${state === 'new' ? '?signup=true' : ''}`);
     }, 300);
   };
 
