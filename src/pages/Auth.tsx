@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -16,7 +17,8 @@ const Auth = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    name: '',
+    firstName: '',
+    lastName: '',
     phone: '',
   });
 
@@ -41,7 +43,9 @@ const Auth = () => {
           password: formData.password,
           options: {
             data: {
-              name: formData.name,
+              first_name: formData.firstName,
+              last_name: formData.lastName,
+              name: `${formData.firstName} ${formData.lastName}`,
               phone: formData.phone,
             }
           }
@@ -98,17 +102,31 @@ const Auth = () => {
           <div className="space-y-4">
             {isSignUp && (
               <>
-                <div>
-                  <label htmlFor="name" className="block text-green-600 mb-2">Full Name</label>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Enter your full name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required={isSignUp}
-                    className="w-full"
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="firstName" className="block text-green-600 mb-2">First Name</label>
+                    <Input
+                      id="firstName"
+                      type="text"
+                      placeholder="Enter your first name"
+                      value={formData.firstName}
+                      onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                      required={isSignUp}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="lastName" className="block text-green-600 mb-2">Last Name</label>
+                    <Input
+                      id="lastName"
+                      type="text"
+                      placeholder="Enter your last name"
+                      value={formData.lastName}
+                      onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                      required={isSignUp}
+                      className="w-full"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label htmlFor="phone" className="block text-green-600 mb-2">Phone Number</label>
