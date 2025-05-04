@@ -1,4 +1,5 @@
-import { createHash } from 'crypto-js/sha256';
+
+import MD5 from 'crypto-js/md5';
 
 /**
  * Get user initials from email or name
@@ -33,7 +34,7 @@ export const getGravatarUrl = (email: string): string => {
   const normalizedEmail = email.trim().toLowerCase();
   
   // Create MD5 hash of the normalized email
-  const hash = createHash(normalizedEmail).toString();
+  const hash = MD5(normalizedEmail).toString();
   
   // Return Gravatar URL with the hash
   return `https://www.gravatar.com/avatar/${hash}?d=mp&s=80`;
