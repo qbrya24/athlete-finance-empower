@@ -31,33 +31,38 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onFinish }) => {
   const { user } = useAuth();
   
   useEffect(() => {
-    // Save financial literacy score to the user's profile
-    const saveFinancialLiteracyScore = async () => {
+    // Save financial literacy score and investor profile to the user's profile
+    const saveUserResults = async () => {
       if (!user) return;
       
       try {
         const { error } = await supabase
           .from('profiles')
-          .update({ financial_literacy_score: results.literacyScore.percentage })
+          .update({ 
+            financial_literacy_score: results.literacyScore.percentage,
+            primary_investor_profile: results.profile.primaryProfile,
+            secondary_investor_profile: results.profile.secondaryProfile,
+            investor_profiles: results.profile.profiles
+          })
           .eq('id', user.id);
           
         if (error) {
-          console.error('Error saving financial literacy score:', error);
+          console.error('Error saving user results:', error);
           toast({
             title: "Error",
-            description: "Failed to save your financial literacy score. Your progress has been recorded locally.",
+            description: "Failed to save your results. Your progress has been recorded locally.",
             variant: "destructive"
           });
         } else {
-          console.log('Financial literacy score saved successfully');
+          console.log('User results saved successfully');
         }
       } catch (error) {
-        console.error('Error saving financial literacy score:', error);
+        console.error('Error saving user results:', error);
       }
     };
     
-    saveFinancialLiteracyScore();
-  }, [user, results.literacyScore.percentage]);
+    saveUserResults();
+  }, [user, results]);
   
   const handleFinish = () => {
     // Navigate to dashboard after onboarding completion
