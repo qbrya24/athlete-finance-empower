@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -55,7 +56,7 @@ const Auth = () => {
           variant: "default",
         });
         
-        navigate('/onboarding');
+        navigate('/dashboard');
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: formData.email,
@@ -64,7 +65,7 @@ const Auth = () => {
         
         if (error) throw error;
         
-        navigate('/onboarding');
+        navigate('/dashboard');
       }
     } catch (error: any) {
       toast({
