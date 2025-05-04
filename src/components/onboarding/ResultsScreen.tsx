@@ -36,13 +36,21 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onFinish }) => {
       if (!user) return;
       
       try {
+        // Extract the individual scores from the profiles array
+        const saverScore = results.profile.profiles.find(p => p.type === 'Saver')?.score || 0;
+        const spenderScore = results.profile.profiles.find(p => p.type === 'Spender')?.score || 0;
+        const investorScore = results.profile.profiles.find(p => p.type === 'Investor')?.score || 0;
+        
         const { error } = await supabase
           .from('profiles')
           .update({ 
             financial_literacy_score: results.literacyScore.percentage,
             primary_investor_profile: results.profile.primaryProfile,
             secondary_investor_profile: results.profile.secondaryProfile,
-            investor_profiles: results.profile.profiles
+            investor_profiles: results.profile.profiles,
+            saver_score: saverScore,
+            spender_score: spenderScore,
+            investor_score: investorScore
           })
           .eq('id', user.id);
           
@@ -55,6 +63,11 @@ const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onFinish }) => {
           });
         } else {
           console.log('User results saved successfully');
+          toast({
+            title: "Success",
+            description: "Your financial profile has been saved successfully.",
+            variant: "default"
+          });
         }
       } catch (error) {
         console.error('Error saving user results:', error);

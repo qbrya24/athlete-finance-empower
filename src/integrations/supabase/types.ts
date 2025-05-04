@@ -127,8 +127,14 @@ export type Database = {
           email: string | null
           financial_literacy_score: number | null
           id: string
+          investor_profiles: Json | null
+          investor_score: number | null
           name: string | null
           phone: string | null
+          primary_investor_profile: string | null
+          saver_score: number | null
+          secondary_investor_profile: string | null
+          spender_score: number | null
           updated_at: string
         }
         Insert: {
@@ -136,8 +142,14 @@ export type Database = {
           email?: string | null
           financial_literacy_score?: number | null
           id: string
+          investor_profiles?: Json | null
+          investor_score?: number | null
           name?: string | null
           phone?: string | null
+          primary_investor_profile?: string | null
+          saver_score?: number | null
+          secondary_investor_profile?: string | null
+          spender_score?: number | null
           updated_at?: string
         }
         Update: {
@@ -145,8 +157,14 @@ export type Database = {
           email?: string | null
           financial_literacy_score?: number | null
           id?: string
+          investor_profiles?: Json | null
+          investor_score?: number | null
           name?: string | null
           phone?: string | null
+          primary_investor_profile?: string | null
+          saver_score?: number | null
+          secondary_investor_profile?: string | null
+          spender_score?: number | null
           updated_at?: string
         }
         Relationships: []
