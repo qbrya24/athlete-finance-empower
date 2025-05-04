@@ -1,9 +1,12 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ChartContainer } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/providers/AuthProvider';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/components/ui/use-toast';
 
 interface ResultsScreenProps {
   results: {
@@ -26,6 +29,36 @@ interface ResultsScreenProps {
 
 const ResultsScreen: React.FC<ResultsScreenProps> = ({ results, onFinish }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  
+  useEffect(() => {
+    // Save financial literacy score to the user's profile
+    const saveFinancialLiteracyScore = async () => {
+      if (!user) return;
+      
+      try {
+        const { error } = await supabase
+          .from('profiles')
+          .update({ financial_literacy_score: results.literacyScore.percentage })
+          .eq('id', user.id);
+          
+        if (error) {
+          console.error('Error saving financial literacy score:', error);
+          toast({
+            title: "Error",
+            description: "Failed to save your financial literacy score. Your progress has been recorded locally.",
+            variant: "destructive"
+          });
+        } else {
+          console.log('Financial literacy score saved successfully');
+        }
+      } catch (error) {
+        console.error('Error saving financial literacy score:', error);
+      }
+    };
+    
+    saveFinancialLiteracyScore();
+  }, [user, results.literacyScore.percentage]);
   
   const handleFinish = () => {
     // Navigate to dashboard after onboarding completion
