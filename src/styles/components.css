@@ -107,6 +107,24 @@
     @apply bg-slate-100 rounded p-3 my-4 overflow-x-auto font-mono text-sm;
   }
   
+  /* Chart-specific components */
+  .pie-chart-container {
+    @apply bg-green/50 rounded-lg p-4;
+    height: 300px;
+  }
+  
+  .chart-legend {
+    @apply flex flex-wrap justify-center gap-3 text-xs text-cream/90 mt-4;
+  }
+  
+  .chart-legend-item {
+    @apply flex items-center gap-1;
+  }
+  
+  .chart-legend-color {
+    @apply w-3 h-3 rounded-sm;
+  }
+  
   /* iPhone 16:9 specific components */
   .iphone-16-9-card {
     @apply rounded-lg p-3 border border-green/10;
