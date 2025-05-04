@@ -1,3 +1,4 @@
+
 import React, { ReactNode, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, Book, BarChart3, Newspaper as NewspaperIcon, Settings, Menu, X } from 'lucide-react';
@@ -6,6 +7,7 @@ import Logo from '@/components/ui/Logo';
 import { useIsMobile } from '@/hooks/use-mobile';
 import SettingsButton from './SettingsButton';
 import UserProfile from '@/components/user/UserProfile';
+import FadeIn from '@/components/animations/FadeIn';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -69,62 +71,64 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
   return (
     <div className="min-h-screen bg-cream">
-      <header className="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-green/10 px-3 sm:px-4 py-3 safe-area-inset-top">
-        <div className="container mx-auto flex justify-between items-center">
-          <Logo size="sm" variant={isMobile ? "icon" : "full"} />
-          
-          <div className="flex items-center space-x-3">
-            <UserProfile />
-            {isMobile && <SettingsButton />}
-            <button 
-              className="md:hidden text-green p-2 mobile-touch-target"
-              onClick={toggleMenu}
-              aria-label="Toggle menu"
-            >
-              {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-          
-          <nav className="hidden md:flex items-center space-x-2">
-            {navigation.map((item) => (
+      <header className="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-green/10 px-3 sm:px-4 py-3 safe-area-inset-top transition-all duration-300">
+        <FadeIn>
+          <div className="container mx-auto flex justify-between items-center">
+            <Logo size="sm" variant={isMobile ? "icon" : "full"} className="transition-all duration-300" />
+            
+            <div className="flex items-center space-x-3">
+              <UserProfile />
+              {isMobile && <SettingsButton />}
+              <button 
+                className="md:hidden text-green p-2 mobile-touch-target"
+                onClick={toggleMenu}
+                aria-label="Toggle menu"
+              >
+                {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
+            
+            <nav className="hidden md:flex items-center space-x-2">
+              {navigation.map((item) => (
+                <button
+                  key={item.name}
+                  onClick={() => navigate(item.path)}
+                  className={cn(
+                    "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 group",
+                    isActive(item.path) 
+                      ? "text-green-700 bg-green-50 shadow-sm" 
+                      : "text-green-600/70 hover:bg-green-50/50 hover:text-green-700"
+                  )}
+                  aria-current={isActive(item.path) ? "page" : undefined}
+                >
+                  <span className="flex items-center gap-2">
+                    {item.icon}
+                    {item.name}
+                  </span>
+                </button>
+              ))}
               <button
-                key={item.name}
-                onClick={() => navigate(item.path)}
+                onClick={() => navigate('/settings')}
                 className={cn(
-                  "px-4 py-2 rounded-lg text-sm font-medium transition-all group",
-                  isActive(item.path) 
+                  "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 group",
+                  isActive('/settings') 
                     ? "text-green-700 bg-green-50 shadow-sm" 
                     : "text-green-600/70 hover:bg-green-50/50 hover:text-green-700"
                 )}
-                aria-current={isActive(item.path) ? "page" : undefined}
+                aria-current={isActive('/settings') ? "page" : undefined}
               >
                 <span className="flex items-center gap-2">
-                  {item.icon}
-                  {item.name}
+                  <Settings className="w-5 h-5" />
                 </span>
               </button>
-            ))}
-            <button
-              onClick={() => navigate('/settings')}
-              className={cn(
-                "px-4 py-2 rounded-lg text-sm font-medium transition-all group",
-                isActive('/settings') 
-                  ? "text-green-700 bg-green-50 shadow-sm" 
-                  : "text-green-600/70 hover:bg-green-50/50 hover:text-green-700"
-              )}
-              aria-current={isActive('/settings') ? "page" : undefined}
-            >
-              <span className="flex items-center gap-2">
-                <Settings className="w-5 h-5" />
-              </span>
-            </button>
-          </nav>
-        </div>
+            </nav>
+          </div>
+        </FadeIn>
       </header>
 
       <div 
         className={cn(
-          "fixed inset-0 z-30 bg-black/50 md:hidden transition-opacity backdrop-blur-sm",
+          "fixed inset-0 z-30 bg-black/50 md:hidden transition-all duration-300 ease-in-out backdrop-blur-sm",
           menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         )}
         onClick={() => setMenuOpen(false)}
@@ -167,7 +171,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             key={item.name}
             onClick={() => navigate(item.path)}
             className={cn(
-              "flex flex-col items-center justify-center py-2 px-1 w-full transition-colors",
+              "flex flex-col items-center justify-center py-2 px-1 w-full transition-all duration-300",
               isActive(item.path) 
                 ? "text-green-700 bg-green-50/60" 
                 : "text-green-600/60"
@@ -181,7 +185,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         <button
           onClick={() => navigate('/settings')}
           className={cn(
-            "flex flex-col items-center justify-center py-2 px-1 w-full transition-colors",
+            "flex flex-col items-center justify-center py-2 px-1 w-full transition-all duration-300",
             isActive('/settings') 
               ? "text-green-700 bg-green-50/60" 
               : "text-green-600/60"
@@ -189,15 +193,16 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           aria-current={isActive('/settings') ? "page" : undefined}
         >
           <Settings className="w-5 h-5" />
+          <span className="text-xs mt-1 font-medium">Settings</span>
         </button>
       </div>
 
       <main className={cn(
-        "pt-[61px] pb-[72px] md:pb-0 min-h-screen",
+        "pt-[72px] pb-[72px] md:pb-0 min-h-screen transition-all duration-300",
         isFinancialTools && "financial-tool-container"
       )}>
         <div className={cn(
-          "container mx-auto px-3 sm:px-4 py-4 overflow-auto content-wrapper",
+          "container mx-auto px-3 sm:px-4 py-4 overflow-auto content-wrapper transition-all duration-300",
           isFinancialTools && "no-scrollbar"
         )}>
           {children}

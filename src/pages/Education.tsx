@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
@@ -155,7 +156,7 @@ const Education = () => {
       <AppLayout>
         <div className="page-container">
           <div className="flex items-center justify-center h-64">
-            <div className="text-lg text-green/70">Loading modules...</div>
+            <div className="text-lg text-green/70 animate-pulse">Loading modules...</div>
           </div>
         </div>
       </AppLayout>
@@ -169,11 +170,12 @@ const Education = () => {
           <ModuleDetails
             moduleId={selectedModuleId}
             progress={userProgress[selectedModuleId] || 0}
+            onBack={() => setSelectedModuleId(null)}
           />
         ) : (
-          <>
-            <FadeIn className="mb-12">
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+          <div className="max-w-5xl mx-auto w-full">
+            <FadeIn className="mb-8">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
                 <div>
                   <span className="inline-block px-3 py-1 bg-green-100 text-green-900 rounded-full text-xs font-medium mb-2">
                     Education
@@ -198,7 +200,7 @@ const Education = () => {
               userProgress={userProgress}
               onStartModule={handleStartModule}
             />
-          </>
+          </div>
         )}
       </div>
     </AppLayout>

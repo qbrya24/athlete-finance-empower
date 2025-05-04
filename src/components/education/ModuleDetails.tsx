@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/providers/AuthProvider';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import LessonQuiz from './LessonQuiz';
+import FadeIn from '@/components/animations/FadeIn';
 
 type Quiz = {
   id: number;
@@ -38,13 +39,14 @@ type LessonProgress = {
 type ModuleDetailsProps = {
   moduleId: number;
   progress: number;
+  onBack?: () => void;
 };
 
-const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
+const ModuleDetails = ({ moduleId, progress, onBack }: ModuleDetailsProps) => {
   const [module, setModule] = useState<any>(null);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeVideo, setActiveVideo] = useState<string | null>(null);
+  const [activeLesson, setActiveLesson] = useState<number | null>(null);
   const [completedLessons, setCompletedLessons] = useState<Record<number, boolean>>({});
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -118,6 +120,11 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
         }));
         
         setLessons(enhancedLessons);
+        
+        // If this is first visit, open the first lesson
+        if (enhancedLessons.length > 0) {
+          setActiveLesson(enhancedLessons[0].id);
+        }
         
         // Fetch user progress for these lessons if user is logged in
         if (user) {
@@ -223,7 +230,7 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
     }
     
     return (
-      <div className="aspect-video rounded-lg overflow-hidden mb-6">
+      <div className="aspect-video rounded-lg overflow-hidden mb-6 shadow-md">
         <iframe 
           width="100%" 
           height="100%" 
@@ -240,12 +247,12 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
   // Function to render lesson content
   const renderLessonContent = (content: string) => {
     // This is a simple implementation - could be enhanced with markdown parsing
-    return <div dangerouslySetInnerHTML={{ __html: content }} />;
+    return <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: content }} />;
   };
 
   if (loading) {
     return <div className="flex items-center justify-center h-64">
-      <div className="text-lg text-slate-600">Loading module details...</div>
+      <div className="text-lg text-green-600 animate-pulse">Loading module details...</div>
     </div>;
   }
 
@@ -256,127 +263,141 @@ const ModuleDetails = ({ moduleId, progress }: ModuleDetailsProps) => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-12">
-      <div className="flex items-center justify-between">
-        <Button
-          variant="outline"
-          onClick={() => navigate('/education')}
-          className="gap-2 hover:bg-slate-50 text-slate-900 border-slate-200"
-        >
-          <ArrowLeft className="h-4 w-4 text-slate-800" />
-          Back to Modules
-        </Button>
-        <div className="flex items-center gap-2 text-sm text-slate-900 bg-slate-100 px-3 py-1.5 rounded-full">
-          <Clock className="h-4 w-4 text-slate-800" />
-          {module.duration}
-        </div>
-      </div>
-
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-slate-900 mb-4">
-          {module.title}
-        </h1>
-        <p className="text-slate-600 max-w-2xl mx-auto">
-          {module.description}
-        </p>
-      </div>
-
-      <Card className="bg-white border-slate-200 shadow-lg">
-        <CardHeader>
-          <h2 className="text-xl font-semibold text-slate-900">Learning Objectives</h2>
-        </CardHeader>
-        <CardContent>
-          <ul className="grid gap-4 md:grid-cols-2">
-            {module.learning_objectives.map((objective: string, index: number) => (
-              <li key={index} className="flex items-start gap-3 bg-slate-50 p-4 rounded-lg">
-                <CheckCircle className="h-5 w-5 text-slate-700 shrink-0 mt-0.5" />
-                <span className="text-slate-700">{objective}</span>
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
-
-      <div>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-slate-900">Course Content</h2>
-          <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-full">
-            <BookOpen className="h-4 w-4 text-slate-800" />
-            <span className="text-sm text-slate-900">
-              {lessons.length} lessons
-            </span>
+    <div className="content-section space-y-8 pb-12">
+      <FadeIn>
+        <div className="flex items-center justify-between mb-2">
+          <Button
+            variant="outline"
+            onClick={onBack || (() => navigate('/education'))}
+            className="gap-2 hover:bg-green-50 text-green-800 border-green-100"
+          >
+            <ArrowLeft className="h-4 w-4 text-green-700" />
+            Back to Modules
+          </Button>
+          <div className="flex items-center gap-2 text-sm text-green-900 bg-green-50 px-3 py-1.5 rounded-full">
+            <Clock className="h-4 w-4 text-green-700" />
+            {module.duration}
           </div>
         </div>
 
-        <Progress
-          value={progress}
-          className="h-2 mb-8 bg-slate-200"
-        />
+        <div className="text-center my-6">
+          <h1 className="text-3xl font-bold text-green-900 mb-4">
+            {module.title}
+          </h1>
+          <p className="text-slate-600 max-w-2xl mx-auto">
+            {module.description}
+          </p>
+        </div>
 
-        <Accordion type="single" collapsible className="space-y-4">
-          {lessons.map((lesson) => (
-            <AccordionItem 
-              key={lesson.id} 
-              value={`lesson-${lesson.id}`}
-              className="border border-slate-200 bg-white rounded-lg overflow-hidden"
-            >
-              <AccordionTrigger className="px-6 py-4 hover:no-underline group">
-                <div className="flex items-start justify-between gap-4 w-full">
-                  <div className="flex-1 text-left">
-                    <div className="flex items-center">
-                      <h3 className="font-medium text-lg text-slate-900 group-hover:text-slate-700">
-                        {lesson.title}
-                      </h3>
-                      {completedLessons[lesson.id] && (
-                        <span className="ml-2 bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
-                          Completed
-                        </span>
-                      )}
+        <Card className="bg-white border-green-100 shadow-md">
+          <CardHeader className="bg-green-50 border-b border-green-100 rounded-t-xl">
+            <h2 className="text-xl font-semibold text-green-900">Learning Objectives</h2>
+          </CardHeader>
+          <CardContent className="p-6">
+            <ul className="grid gap-4 md:grid-cols-2">
+              {module.learning_objectives.map((objective: string, index: number) => (
+                <li key={index} className="flex items-start gap-3 bg-green-50/50 p-4 rounded-lg">
+                  <CheckCircle className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
+                  <span className="text-slate-700">{objective}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      </FadeIn>
+
+      <FadeIn delay={200}>
+        <div>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-green-900">Course Content</h2>
+            <div className="flex items-center gap-2 bg-green-50 px-3 py-1.5 rounded-full">
+              <BookOpen className="h-4 w-4 text-green-700" />
+              <span className="text-sm text-green-900">
+                {lessons.length} lessons
+              </span>
+            </div>
+          </div>
+
+          <Progress
+            value={progress}
+            className="h-2 mb-8 bg-green-100"
+          />
+
+          <Accordion 
+            type="single" 
+            collapsible 
+            className="space-y-4"
+            value={activeLesson ? `lesson-${activeLesson}` : undefined}
+            onValueChange={(value) => setActiveLesson(value ? parseInt(value.replace('lesson-', '')) : null)}
+          >
+            {lessons.map((lesson) => (
+              <AccordionItem 
+                key={lesson.id} 
+                value={`lesson-${lesson.id}`}
+                className="border border-green-100 bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+              >
+                <AccordionTrigger className="px-6 py-4 hover:no-underline group">
+                  <div className="flex items-start justify-between gap-4 w-full">
+                    <div className="flex-1 text-left">
+                      <div className="flex items-center">
+                        <h3 className="font-medium text-lg text-green-900 group-hover:text-green-700">
+                          {lesson.title}
+                        </h3>
+                        {completedLessons[lesson.id] && (
+                          <span className="ml-2 bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
+                            Completed
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-slate-600 mt-1">
+                        {lesson.description}
+                      </p>
+                      <div className="flex items-center gap-3 mt-2">
+                        {lesson.video_url && (
+                          <div className="flex items-center text-sm text-slate-500">
+                            <Video className="h-3.5 w-3.5 mr-1 text-green-600" />
+                            <span>Video lesson</span>
+                          </div>
+                        )}
+                        {lesson.quizzes && lesson.quizzes.length > 0 && (
+                          <div className="flex items-center text-sm text-slate-500">
+                            <CheckCircle className="h-3.5 w-3.5 mr-1 text-green-600" />
+                            <span>Quiz</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <p className="text-sm text-slate-600 mt-1">
-                      {lesson.description}
-                    </p>
-                    {lesson.video_url && (
-                      <div className="flex items-center mt-2 text-sm text-slate-500">
-                        <Video className="h-3.5 w-3.5 mr-1 text-slate-400" />
-                        Includes video lesson
-                      </div>
-                    )}
-                    {lesson.quizzes && lesson.quizzes.length > 0 && (
-                      <div className="flex items-center mt-1 text-sm text-slate-500">
-                        <CheckCircle className="h-3.5 w-3.5 mr-1 text-slate-400" />
-                        Includes quiz
-                      </div>
-                    )}
+                    <div className="text-sm text-slate-900 flex items-center gap-2 whitespace-nowrap bg-green-50 px-3 py-1.5 rounded-full">
+                      <Clock className="h-4 w-4 text-green-700" />
+                      {lesson.duration}
+                    </div>
                   </div>
-                  <div className="text-sm text-slate-900 flex items-center gap-2 whitespace-nowrap bg-slate-100 px-3 py-1.5 rounded-full">
-                    <Clock className="h-4 w-4 text-slate-800" />
-                    {lesson.duration}
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-6">
+                  <div className="bg-green-50/30 p-6 rounded-lg mb-6">
+                    {lesson.video_url && renderVideoPlayer(lesson.video_url)}
+                    
+                    <div className="lesson-content">
+                      {renderLessonContent(lesson.content)}
+                    </div>
                   </div>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="px-6 pb-6">
-                {lesson.video_url && renderVideoPlayer(lesson.video_url)}
-                
-                <div className="prose prose-slate max-w-none">
-                  {renderLessonContent(lesson.content)}
-                </div>
-                
-                {lesson.quizzes && lesson.quizzes.length > 0 && (
-                  <div className="mt-8 pt-6 border-t border-slate-200">
-                    <LessonQuiz 
-                      quiz={lesson.quizzes} 
-                      lessonId={lesson.id} 
-                      isCompleted={!!completedLessons[lesson.id]}
-                      onComplete={(score) => handleLessonQuizComplete(lesson.id, score)}
-                    />
-                  </div>
-                )}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
+                  
+                  {lesson.quizzes && lesson.quizzes.length > 0 && (
+                    <div className="mt-8 pt-6 border-t border-green-100">
+                      <LessonQuiz 
+                        quiz={lesson.quizzes} 
+                        lessonId={lesson.id} 
+                        isCompleted={!!completedLessons[lesson.id]}
+                        onComplete={(score) => handleLessonQuizComplete(lesson.id, score)}
+                      />
+                    </div>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </FadeIn>
     </div>
   );
 };
