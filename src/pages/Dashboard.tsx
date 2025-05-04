@@ -7,6 +7,7 @@ import AppLayout from '@/components/layout/AppLayout';
 import CategoryCard from '@/components/dashboard/CategoryCard';
 import ResourcesSection from '@/components/dashboard/ResourcesSection';
 import FadeIn from '@/components/animations/FadeIn';
+import FinancialProfileWidget from '@/components/dashboard/FinancialProfileWidget';
 import { BookOpen, BarChart3, Newspaper, TrendingUp, PiggyBank, ArrowUpRight } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -149,6 +150,11 @@ const Dashboard = () => {
             </div>
           </div>
         </FadeIn>
+
+        {/* Financial Profile Widget */}
+        <div className="mb-6">
+          <FinancialProfileWidget />
+        </div>
         
         {/* Main categories */}
         <div className="mb-6 md:mb-8">
