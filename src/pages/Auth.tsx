@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +26,8 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
+        // When signing up, add the user metadata which will populate the profiles table
+        // through the database trigger
         const { error } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
@@ -37,6 +40,12 @@ const Auth = () => {
         });
         
         if (error) throw error;
+        
+        toast({
+          title: "Account created successfully",
+          description: "Your account has been created and your profile information has been saved.",
+          variant: "default",
+        });
         
         navigate('/onboarding');
       } else {
