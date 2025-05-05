@@ -1,12 +1,11 @@
 
-import React from 'react';
 import { PiggyBank, TrendingUp, Wallet, User } from 'lucide-react';
 
 export interface ProfileTypeInfo {
   type: string;
   score: number;
   description: string;
-  icon: React.ReactNode;
+  iconType: 'PiggyBank' | 'Wallet' | 'TrendingUp' | 'User';
   traits: string[];
   color: string;
 }
@@ -27,7 +26,7 @@ export const getProfileTypeInfo = (type: string | null, profileData?: ProfileDat
         type: 'Saver',
         score: profileData?.saver_score || 0,
         description: 'You prioritize financial security and are careful with your money.',
-        icon: <PiggyBank className="w-6 h-6 text-cream" />,
+        iconType: 'PiggyBank',
         traits: ['Risk-averse', 'Security-focused', 'Disciplined'],
         color: 'bg-green-500/80'
       };
@@ -36,7 +35,7 @@ export const getProfileTypeInfo = (type: string | null, profileData?: ProfileDat
         type: 'Spender',
         score: profileData?.spender_score || 0,
         description: 'You enjoy using your money for experiences and possessions.',
-        icon: <Wallet className="w-6 h-6 text-cream" />,
+        iconType: 'Wallet',
         traits: ['Experience-oriented', 'Present-focused', 'Spontaneous'],
         color: 'bg-gold/80'
       };
@@ -45,7 +44,7 @@ export const getProfileTypeInfo = (type: string | null, profileData?: ProfileDat
         type: 'Investor',
         score: profileData?.investor_score || 0,
         description: 'You focus on growing your wealth through investments.',
-        icon: <TrendingUp className="w-6 h-6 text-cream" />,
+        iconType: 'TrendingUp',
         traits: ['Growth-minded', 'Strategic', 'Future-oriented'],
         color: 'bg-blue-500/80'
       };
@@ -54,7 +53,7 @@ export const getProfileTypeInfo = (type: string | null, profileData?: ProfileDat
         type: 'Unknown',
         score: 0,
         description: 'Your financial profile could not be determined.',
-        icon: <User className="w-6 h-6 text-cream" />,
+        iconType: 'User',
         traits: ['Complete the assessment to learn more'],
         color: 'bg-gray-500'
       };

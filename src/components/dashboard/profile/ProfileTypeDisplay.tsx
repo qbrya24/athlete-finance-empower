@@ -1,11 +1,12 @@
 
 import React from 'react';
+import { PiggyBank, TrendingUp, Wallet, User } from 'lucide-react';
 
 interface ProfileTypeInfo {
   type: string;
   score: number;
   description: string;
-  icon: React.ReactNode;
+  iconType: 'PiggyBank' | 'Wallet' | 'TrendingUp' | 'User';
   traits: string[];
   color: string;
 }
@@ -19,11 +20,26 @@ const ProfileTypeDisplay: React.FC<ProfileTypeDisplayProps> = ({
   profileInfo,
   isSecondary = false 
 }) => {
+  // Render the appropriate icon based on iconType
+  const renderIcon = () => {
+    switch (profileInfo.iconType) {
+      case 'PiggyBank':
+        return <PiggyBank className="w-6 h-6 text-cream" />;
+      case 'Wallet':
+        return <Wallet className="w-6 h-6 text-cream" />;
+      case 'TrendingUp':
+        return <TrendingUp className="w-6 h-6 text-cream" />;
+      case 'User':
+      default:
+        return <User className="w-6 h-6 text-cream" />;
+    }
+  };
+
   return (
     <div className={isSecondary ? '' : 'mb-4'}>
       <div className="flex items-center gap-3 mb-2">
         <div className={`p-2 rounded-full ${profileInfo.color}`}>
-          {profileInfo.icon}
+          {renderIcon()}
         </div>
         <div>
           <h3 className="font-semibold">
