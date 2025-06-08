@@ -22,11 +22,19 @@ const Auth = () => {
     phone: '',
   });
 
-  // Check URL parameters on component mount
+  // Check URL parameters on component mount and pre-fill test data
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     if (searchParams.get('signup') === 'true') {
       setIsSignUp(true);
+      // Pre-fill with test data for easy account creation
+      setFormData({
+        email: 'john.athlete@example.com',
+        password: 'password123',
+        firstName: 'John',
+        lastName: 'Athlete',
+        phone: '555-123-4567',
+      });
     }
   }, [location.search]);
 
