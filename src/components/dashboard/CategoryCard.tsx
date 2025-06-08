@@ -31,19 +31,19 @@ const CategoryCard: React.FC<CategoryCardProps> = ({
       <button
         onClick={() => navigate(path)}
         className={cn(
-          "w-full h-full p-4 sm:p-6 rounded-2xl transition-all duration-300",
-          "bg-white shadow-md hover:shadow-lg",
+          "w-full h-full p-3 rounded-lg transition-all duration-300",
+          "bg-white shadow-sm hover:shadow-md",
           "border border-green/5 hover:border-green/10",
           "flex flex-col items-center text-center",
           "button-hover",
           className
         )}
       >
-        <div className="mb-3 p-3 rounded-full bg-green-50 text-green flex items-center justify-center">
+        <div className="mb-2 p-2 rounded-full bg-green-50 text-green flex items-center justify-center">
           {icon}
         </div>
-        <h3 className="text-base sm:text-lg font-semibold mb-1">{title}</h3>
-        <p className="text-xs sm:text-sm text-green/70">{description}</p>
+        <h3 className="text-sm font-semibold mb-1">{title}</h3>
+        <p className="text-xs text-green/70">{description}</p>
       </button>
     </FadeIn>
   );

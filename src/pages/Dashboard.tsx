@@ -42,25 +42,25 @@ const Dashboard = () => {
     {
       title: 'Educational Content',
       description: 'Learn financial concepts tailored for athletes',
-      icon: <BookOpen className="w-5 h-5" />,
+      icon: <BookOpen className="w-4 h-4" />,
       path: '/education',
     },
     {
       title: 'Financial Tools',
       description: 'Track and plan your financial journey',
-      icon: <BarChart3 className="w-5 h-5" />,
+      icon: <BarChart3 className="w-4 h-4" />,
       path: '/financial-tools',
     },
     {
       title: 'News & Updates',
       description: 'Stay informed with athlete-specific financial news',
-      icon: <Newspaper className="w-5 h-5" />,
+      icon: <Newspaper className="w-4 h-4" />,
       path: '/news',
     },
     {
       title: 'NIL Income',
       description: 'Manage your name, image, and likeness income',
-      icon: <TrendingUp className="w-5 h-5" />,
+      icon: <TrendingUp className="w-4 h-4" />,
       path: '/financial-tools',
     },
   ];
@@ -72,17 +72,17 @@ const Dashboard = () => {
         <QuickStats financialData={financialData} isLoading={isLoading} />
 
         {/* Financial Profile Widget */}
-        <div className="mb-6">
+        <div className="mb-4">
           <FinancialProfileWidget />
         </div>
         
         {/* Main categories */}
-        <div className="mb-6 md:mb-8">
+        <div className="mb-4">
           <FadeIn>
-            <h2 className="text-lg font-semibold mb-3 md:mb-4">Get Started</h2>
+            <h2 className="text-lg font-semibold mb-2">Get Started</h2>
           </FadeIn>
           
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
             {categories.map((category, index) => (
               <CategoryCard
                 key={category.title}
@@ -97,7 +97,7 @@ const Dashboard = () => {
         </div>
         
         {/* Resources section */}
-        <div className="mb-6 md:mb-8">
+        <div className="mb-4">
           <ResourcesSection />
         </div>
         
