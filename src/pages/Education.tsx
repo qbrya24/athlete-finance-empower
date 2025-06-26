@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
@@ -34,7 +33,7 @@ const Education = () => {
     try {
       console.log('Fetching education modules...');
       
-      // First fetch education modules
+      // Fetch education modules with error handling
       const { data: modulesData, error: modulesError } = await supabase
         .from('education_modules')
         .select('*')
@@ -42,90 +41,52 @@ const Education = () => {
 
       if (modulesError) {
         console.error('Error fetching modules:', modulesError);
-        throw modulesError;
+        throw new Error(`Failed to fetch modules: ${modulesError.message}`);
       }
       
-      console.log('Raw modules data:', modulesData);
+      console.log('Modules data:', modulesData);
       
       if (!modulesData || modulesData.length === 0) {
         console.log('No modules found in database');
         setModules([]);
+        setLoading(false);
         return;
       }
       
-      // For each module, determine if it has videos or quizzes
-      const { data: lessonsData, error: lessonsError } = await supabase
-        .from('education_lessons')
-        .select('module_id, video_url');
-        
-      if (lessonsError) {
-        console.error('Error fetching lessons:', lessonsError);
-        throw lessonsError;
-      }
+      // Process modules to add additional metadata
+      const processedModules = modulesData.map(module => ({
+        ...module,
+        has_videos: false, // Will be updated when we fetch lessons
+        has_quizzes: false // Will be updated when we fetch lessons
+      }));
       
-      // Get lessons that have quizzes
-      const { data: lessonsWithQuizzes, error: quizzesError } = await supabase
-        .from('education_quizzes')
-        .select('lesson_id');
-        
-      if (quizzesError) {
-        console.error('Error fetching quizzes:', quizzesError);
-        throw quizzesError;
-      }
-      
-      // Create a set of lesson IDs that have quizzes for faster lookup
-      const lessonIdsWithQuizzes = new Set(
-        lessonsWithQuizzes?.map(item => item.lesson_id) || []
-      );
-      
-      // Process modules to add video and quiz indicators
-      const processedModules = modulesData.map(module => {
-        const moduleId = module.id;
-        const moduleLessons = lessonsData?.filter(lesson => lesson.module_id === moduleId) || [];
-        
-        const hasVideos = moduleLessons.some(lesson => lesson.video_url);
-        
-        // Check if any lessons in this module have quizzes
-        const moduleWithQuizzes = lessonsData
-          ?.filter(lesson => lesson.module_id === moduleId)
-          .some(lesson => {
-            const lessonId = (lesson as any).id; // Handle potential type issue
-            return lessonIdsWithQuizzes.has(lessonId);
-          });
-        
-        return {
-          ...module,
-          has_videos: hasVideos,
-          has_quizzes: moduleWithQuizzes || false
-        };
-      });
-      
-      console.log('Processed modules:', processedModules);
+      console.log('Setting modules:', processedModules);
       setModules(processedModules);
       
+      // Fetch user progress if logged in
       if (user) {
+        console.log('Fetching user progress for user:', user.id);
         const { data: progressData, error: progressError } = await supabase
           .from('user_education_progress')
           .select('module_id, progress')
           .eq('user_id', user.id);
-  
+
         if (progressError) {
           console.error('Error fetching progress:', progressError);
-          throw progressError;
+        } else {
+          const progressMap: UserProgress = {};
+          progressData?.forEach(item => {
+            progressMap[item.module_id] = item.progress || 0;
+          });
+          console.log('User progress:', progressMap);
+          setUserProgress(progressMap);
         }
-        
-        const progressMap: UserProgress = {};
-        progressData?.forEach(item => {
-          progressMap[item.module_id] = item.progress || 0;
-        });
-        console.log('User progress:', progressMap);
-        setUserProgress(progressMap);
       }
     } catch (error) {
-      console.error('Error fetching modules:', error);
+      console.error('Error in fetchModulesAndProgress:', error);
       toast({
-        title: "Error",
-        description: "Failed to load education modules. Please try again later.",
+        title: "Error Loading Modules",
+        description: "There was an issue loading the education modules. Please refresh the page or try again later.",
         variant: "destructive"
       });
     } finally {
@@ -164,7 +125,7 @@ const Education = () => {
       console.error('Error updating progress:', error);
       toast({
         title: "Error",
-        description: "Failed to update progress. Please try again later.",
+        description: "Failed to update progress. Please try again.",
         variant: "destructive"
       });
     }
@@ -175,7 +136,7 @@ const Education = () => {
       <AppLayout>
         <div className="page-container">
           <div className="flex items-center justify-center h-64">
-            <div className="text-lg text-green/70 animate-pulse">Loading modules...</div>
+            <div className="text-lg text-green/70 animate-pulse">Loading education modules...</div>
           </div>
         </div>
       </AppLayout>
@@ -217,10 +178,16 @@ const Education = () => {
             {modules.length === 0 ? (
               <FadeIn className="text-center py-12">
                 <div className="bg-white/90 backdrop-blur border-green-200 shadow-lg rounded-lg p-8">
-                  <h3 className="text-xl font-semibold text-green-900 mb-4">No modules available yet</h3>
-                  <p className="text-green-800">
-                    Education modules are being prepared. Please check back soon!
+                  <h3 className="text-xl font-semibold text-green-900 mb-4">Setting up your education modules...</h3>
+                  <p className="text-green-800 mb-4">
+                    We're preparing your personalized financial education content.
                   </p>
+                  <button 
+                    onClick={fetchModulesAndProgress}
+                    className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    Refresh Modules
+                  </button>
                 </div>
               </FadeIn>
             ) : (
