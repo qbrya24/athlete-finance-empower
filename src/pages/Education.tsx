@@ -32,15 +32,23 @@ const Education = () => {
 
   const fetchModulesAndProgress = async () => {
     try {
+      console.log('Fetching education modules...');
+      
       // First fetch education modules
       const { data: modulesData, error: modulesError } = await supabase
         .from('education_modules')
         .select('*')
         .order('order_index');
 
-      if (modulesError) throw modulesError;
+      if (modulesError) {
+        console.error('Error fetching modules:', modulesError);
+        throw modulesError;
+      }
       
-      if (!modulesData) {
+      console.log('Raw modules data:', modulesData);
+      
+      if (!modulesData || modulesData.length === 0) {
+        console.log('No modules found in database');
         setModules([]);
         return;
       }
@@ -50,14 +58,20 @@ const Education = () => {
         .from('education_lessons')
         .select('module_id, video_url');
         
-      if (lessonsError) throw lessonsError;
+      if (lessonsError) {
+        console.error('Error fetching lessons:', lessonsError);
+        throw lessonsError;
+      }
       
       // Get lessons that have quizzes
       const { data: lessonsWithQuizzes, error: quizzesError } = await supabase
         .from('education_quizzes')
         .select('lesson_id');
         
-      if (quizzesError) throw quizzesError;
+      if (quizzesError) {
+        console.error('Error fetching quizzes:', quizzesError);
+        throw quizzesError;
+      }
       
       // Create a set of lesson IDs that have quizzes for faster lookup
       const lessonIdsWithQuizzes = new Set(
@@ -86,6 +100,7 @@ const Education = () => {
         };
       });
       
+      console.log('Processed modules:', processedModules);
       setModules(processedModules);
       
       if (user) {
@@ -94,12 +109,16 @@ const Education = () => {
           .select('module_id, progress')
           .eq('user_id', user.id);
   
-        if (progressError) throw progressError;
+        if (progressError) {
+          console.error('Error fetching progress:', progressError);
+          throw progressError;
+        }
         
         const progressMap: UserProgress = {};
         progressData?.forEach(item => {
           progressMap[item.module_id] = item.progress || 0;
         });
+        console.log('User progress:', progressMap);
         setUserProgress(progressMap);
       }
     } catch (error) {
@@ -195,11 +214,22 @@ const Education = () => {
               completedModules={Object.values(userProgress).filter(p => p === 100).length}
             />
 
-            <ModulesGrid
-              modules={modules}
-              userProgress={userProgress}
-              onStartModule={handleStartModule}
-            />
+            {modules.length === 0 ? (
+              <FadeIn className="text-center py-12">
+                <div className="bg-white/90 backdrop-blur border-green-200 shadow-lg rounded-lg p-8">
+                  <h3 className="text-xl font-semibold text-green-900 mb-4">No modules available yet</h3>
+                  <p className="text-green-800">
+                    Education modules are being prepared. Please check back soon!
+                  </p>
+                </div>
+              </FadeIn>
+            ) : (
+              <ModulesGrid
+                modules={modules}
+                userProgress={userProgress}
+                onStartModule={handleStartModule}
+              />
+            )}
           </div>
         )}
       </div>
