@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,33 +23,140 @@ type Module = {
 
 type UserProgress = Record<number, number>;
 
+// Fallback data in case database is not accessible
+const fallbackModules: Module[] = [
+  {
+    id: 1,
+    title: 'Budgeting Basics',
+    description: 'Learn the fundamentals of personal budgeting and money management to take control of your finances.',
+    duration: '2-3 hours',
+    lessons_count: 4,
+    order_index: 1,
+    learning_objectives: [
+      'Create and maintain a personal budget',
+      'Track income and expenses effectively',
+      'Identify areas for cost reduction',
+      'Build healthy spending habits'
+    ]
+  },
+  {
+    id: 2,
+    title: 'Investment Fundamentals',
+    description: 'Discover the basics of investing and how to build wealth through smart investment strategies.',
+    duration: '3-4 hours',
+    lessons_count: 5,
+    order_index: 2,
+    learning_objectives: [
+      'Understand different types of investments',
+      'Learn about risk and return relationships',
+      'Create a diversified investment portfolio',
+      'Make informed investment decisions'
+    ]
+  },
+  {
+    id: 3,
+    title: 'Debt Management',
+    description: 'Master strategies for managing and eliminating debt to achieve financial freedom.',
+    duration: '2-3 hours',
+    lessons_count: 4,
+    order_index: 3,
+    learning_objectives: [
+      'Understand different types of debt',
+      'Learn debt payoff strategies',
+      'Improve credit score and creditworthiness',
+      'Avoid common debt traps'
+    ]
+  },
+  {
+    id: 4,
+    title: 'Retirement Planning',
+    description: 'Plan for a secure financial future with comprehensive retirement planning strategies.',
+    duration: '3-4 hours',
+    lessons_count: 5,
+    order_index: 4,
+    learning_objectives: [
+      'Calculate retirement savings needs',
+      'Understand retirement account options',
+      'Maximize employer benefits and matches',
+      'Create a retirement investment strategy'
+    ]
+  },
+  {
+    id: 5,
+    title: 'Tax Optimization',
+    description: 'Learn how to minimize your tax burden through legal tax planning strategies.',
+    duration: '2-3 hours',
+    lessons_count: 4,
+    order_index: 5,
+    learning_objectives: [
+      'Understand basic tax concepts',
+      'Learn about tax deductions and credits',
+      'Plan tax-efficient investment strategies',
+      'Organize records for tax preparation'
+    ]
+  },
+  {
+    id: 6,
+    title: 'Emergency Planning',
+    description: 'Build financial resilience with proper emergency planning and risk management.',
+    duration: '2 hours',
+    lessons_count: 3,
+    order_index: 6,
+    learning_objectives: [
+      'Build an emergency fund',
+      'Understand insurance needs',
+      'Create a financial contingency plan',
+      'Protect against financial risks'
+    ]
+  }
+];
+
 const Education = () => {
   const { user } = useAuth();
   const [modules, setModules] = useState<Module[]>([]);
   const [userProgress, setUserProgress] = useState<UserProgress>({});
   const [loading, setLoading] = useState(true);
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
+  const [usingFallbackData, setUsingFallbackData] = useState(false);
 
   const fetchModulesAndProgress = async () => {
     try {
       console.log('Fetching education modules...');
       
-      // Fetch education modules with error handling
+      // First, check if Supabase is connected
+      const { data: testData, error: testError } = await supabase
+        .from('education_modules')
+        .select('count')
+        .limit(1);
+
+      if (testError) {
+        console.warn('Database connection issue, using fallback data:', testError);
+        setModules(fallbackModules);
+        setUsingFallbackData(true);
+        setLoading(false);
+        return;
+      }
+
+      // Fetch education modules
       const { data: modulesData, error: modulesError } = await supabase
         .from('education_modules')
         .select('*')
         .order('order_index');
 
       if (modulesError) {
-        console.error('Error fetching modules:', modulesError);
-        throw new Error(`Failed to fetch modules: ${modulesError.message}`);
+        console.warn('Error fetching modules, using fallback data:', modulesError);
+        setModules(fallbackModules);
+        setUsingFallbackData(true);
+        setLoading(false);
+        return;
       }
       
       console.log('Modules data:', modulesData);
       
       if (!modulesData || modulesData.length === 0) {
-        console.log('No modules found in database');
-        setModules([]);
+        console.log('No modules found in database, using fallback data');
+        setModules(fallbackModules);
+        setUsingFallbackData(true);
         setLoading(false);
         return;
       }
@@ -56,12 +164,13 @@ const Education = () => {
       // Process modules to add additional metadata
       const processedModules = modulesData.map(module => ({
         ...module,
-        has_videos: false, // Will be updated when we fetch lessons
-        has_quizzes: false // Will be updated when we fetch lessons
+        has_videos: false,
+        has_quizzes: false
       }));
       
       console.log('Setting modules:', processedModules);
       setModules(processedModules);
+      setUsingFallbackData(false);
       
       // Fetch user progress if logged in
       if (user) {
@@ -84,11 +193,9 @@ const Education = () => {
       }
     } catch (error) {
       console.error('Error in fetchModulesAndProgress:', error);
-      toast({
-        title: "Error Loading Modules",
-        description: "There was an issue loading the education modules. Please refresh the page or try again later.",
-        variant: "destructive"
-      });
+      console.log('Using fallback data due to error');
+      setModules(fallbackModules);
+      setUsingFallbackData(true);
     } finally {
       setLoading(false);
     }
@@ -108,19 +215,28 @@ const Education = () => {
       return;
     }
 
+    if (usingFallbackData) {
+      toast({
+        title: "Demo Mode",
+        description: "Connect to database to save your progress.",
+      });
+    }
+
     setSelectedModuleId(moduleId);
 
     try {
-      const { error } = await supabase
-        .from('user_education_progress')
-        .upsert({
-          user_id: user.id,
-          module_id: moduleId,
-          progress: userProgress[moduleId] || 0,
-          started_at: new Date().toISOString()
-        });
+      if (!usingFallbackData) {
+        const { error } = await supabase
+          .from('user_education_progress')
+          .upsert({
+            user_id: user.id,
+            module_id: moduleId,
+            progress: userProgress[moduleId] || 0,
+            started_at: new Date().toISOString()
+          });
 
-      if (error) throw error;
+        if (error) throw error;
+      }
     } catch (error) {
       console.error('Error updating progress:', error);
       toast({
@@ -166,6 +282,11 @@ const Education = () => {
                   <p className="text-green-800 mt-2 text-lg">
                     Personalized financial education for athletes
                   </p>
+                  {usingFallbackData && (
+                    <p className="text-amber-600 mt-2 text-sm">
+                      Currently running in demo mode. Connect to database to save progress.
+                    </p>
+                  )}
                 </div>
               </div>
             </FadeIn>
@@ -175,28 +296,11 @@ const Education = () => {
               completedModules={Object.values(userProgress).filter(p => p === 100).length}
             />
 
-            {modules.length === 0 ? (
-              <FadeIn className="text-center py-12">
-                <div className="bg-white/90 backdrop-blur border-green-200 shadow-lg rounded-lg p-8">
-                  <h3 className="text-xl font-semibold text-green-900 mb-4">Setting up your education modules...</h3>
-                  <p className="text-green-800 mb-4">
-                    We're preparing your personalized financial education content.
-                  </p>
-                  <button 
-                    onClick={fetchModulesAndProgress}
-                    className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    Refresh Modules
-                  </button>
-                </div>
-              </FadeIn>
-            ) : (
-              <ModulesGrid
-                modules={modules}
-                userProgress={userProgress}
-                onStartModule={handleStartModule}
-              />
-            )}
+            <ModulesGrid
+              modules={modules}
+              userProgress={userProgress}
+              onStartModule={handleStartModule}
+            />
           </div>
         )}
       </div>
