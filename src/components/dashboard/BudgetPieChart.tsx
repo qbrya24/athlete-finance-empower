@@ -37,19 +37,32 @@ const renderCustomizedLabel = ({
 const BudgetPieChart = () => {
   const totalSpent = mockBudgetData.reduce((acc, item) => acc + item.spent, 0);
   const totalBudget = mockBudgetData.reduce((acc, item) => acc + item.budget, 0);
+  const budgetPercentage = ((totalSpent / totalBudget) * 100).toFixed(1);
 
   return (
-    <FadeIn className="bg-card rounded-lg p-4 border border-border">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-foreground">Budget Overview</h3>
-        <div className="text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">${totalSpent.toLocaleString()}</span>
-          <span className="mx-1">/</span>
-          <span>${totalBudget.toLocaleString()}</span>
+    <FadeIn className="bg-card rounded-lg p-6 border border-border shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="text-xl font-semibold text-card-foreground mb-1">Budget Overview</h3>
+          <p className="text-sm text-muted-foreground">Monthly spending breakdown</p>
+        </div>
+        <div className="text-right">
+          <div className="text-2xl font-bold text-card-foreground">
+            ${totalSpent.toLocaleString()}
+          </div>
+          <div className="text-sm text-muted-foreground">
+            of ${totalBudget.toLocaleString()} ({budgetPercentage}%)
+          </div>
+          <div className="w-20 h-1.5 bg-muted rounded-full mt-2">
+            <div 
+              className="h-full bg-primary rounded-full transition-all duration-500"
+              style={{ width: `${budgetPercentage}%` }}
+            />
+          </div>
         </div>
       </div>
       
-      <div className="h-64">
+      <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -58,9 +71,11 @@ const BudgetPieChart = () => {
               cy="50%"
               labelLine={false}
               label={renderCustomizedLabel}
-              outerRadius={80}
+              outerRadius={120}
+              innerRadius={60}
               fill="#8884d8"
               dataKey="spent"
+              paddingAngle={2}
             >
               {mockBudgetData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
@@ -68,25 +83,48 @@ const BudgetPieChart = () => {
             </Pie>
             <Tooltip 
               formatter={(value: number, name: string) => [`$${value.toLocaleString()}`, name]}
-              labelStyle={{ color: '#000' }}
+              labelStyle={{ color: 'hsl(var(--card-foreground))' }}
+              contentStyle={{ 
+                backgroundColor: 'hsl(var(--card))', 
+                border: '1px solid hsl(var(--border))',
+                borderRadius: '8px'
+              }}
             />
           </PieChart>
         </ResponsiveContainer>
       </div>
       
-      <div className="grid grid-cols-2 gap-2 mt-4">
-        {mockBudgetData.map((item) => (
-          <div key={item.name} className="flex items-center space-x-2">
-            <div 
-              className="w-3 h-3 rounded-full" 
-              style={{ backgroundColor: item.color }}
-            />
-            <span className="text-xs text-muted-foreground">{item.name}</span>
-            <span className="text-xs font-medium text-foreground ml-auto">
-              ${item.spent}
-            </span>
-          </div>
-        ))}
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 mt-6">
+        {mockBudgetData.map((item) => {
+          const percentage = ((item.spent / item.budget) * 100).toFixed(0);
+          const isOverBudget = item.spent > item.budget;
+          
+          return (
+            <div key={item.name} className="flex items-center space-x-3 p-3 rounded-lg bg-accent/30 hover:bg-accent/50 transition-colors">
+              <div 
+                className="w-4 h-4 rounded-full flex-shrink-0" 
+                style={{ backgroundColor: item.color }}
+              />
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium text-card-foreground truncate">{item.name}</div>
+                <div className="flex items-center justify-between mt-1">
+                  <span className="text-xs text-muted-foreground">
+                    ${item.spent.toLocaleString()}
+                  </span>
+                  <span className={`text-xs font-medium ${isOverBudget ? 'text-destructive' : 'text-primary'}`}>
+                    {percentage}%
+                  </span>
+                </div>
+                <div className="w-full h-1 bg-muted rounded-full mt-1">
+                  <div 
+                    className={`h-full rounded-full transition-all duration-300 ${isOverBudget ? 'bg-destructive' : 'bg-primary'}`}
+                    style={{ width: `${Math.min(100, parseInt(percentage))}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </FadeIn>
   );

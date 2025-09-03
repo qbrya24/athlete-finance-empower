@@ -44,16 +44,20 @@ const Dashboard = () => {
         <QuickStats financialData={financialData} isLoading={isLoading} />
 
         {/* Main Dashboard Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-          {/* Left Column */}
-          <div className="space-y-6">
-            <EducationPreview />
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
+          {/* Budget Overview - Full Width on Mobile, Spans 2 Columns on Desktop */}
+          <div className="xl:col-span-2">
             <BudgetPieChart />
           </div>
           
-          {/* Right Column */}
-          <div className="space-y-6">
+          {/* Financial Summary */}
+          <div className="xl:col-span-1">
             <FinancialSummary />
+          </div>
+          
+          {/* Education Preview - Full Width */}
+          <div className="xl:col-span-3">
+            <EducationPreview />
           </div>
         </div>
       </div>
