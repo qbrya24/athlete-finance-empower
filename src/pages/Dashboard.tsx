@@ -3,13 +3,11 @@ import React, { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import AppLayout from '@/components/layout/AppLayout';
-import CategoryCard from '@/components/dashboard/CategoryCard';
-import ResourcesSection from '@/components/dashboard/ResourcesSection';
 import FadeIn from '@/components/animations/FadeIn';
-import FinancialProfileWidget from '@/components/dashboard/FinancialProfileWidget';
 import QuickStats from '@/components/dashboard/QuickStats';
-import RecentActivity from '@/components/dashboard/RecentActivity';
-import { BookOpen, BarChart3, Newspaper, TrendingUp } from 'lucide-react';
+import EducationPreview from '@/components/dashboard/EducationPreview';
+import BudgetPieChart from '@/components/dashboard/BudgetPieChart';
+import FinancialSummary from '@/components/dashboard/FinancialSummary';
 import { useToast } from '@/components/ui/use-toast';
 
 const Dashboard = () => {
@@ -38,71 +36,26 @@ const Dashboard = () => {
     }
   }, [error, toast]);
   
-  const categories = [
-    {
-      title: 'Educational Content',
-      description: 'Learn financial concepts tailored for athletes',
-      icon: <BookOpen className="w-4 h-4" />,
-      path: '/education',
-    },
-    {
-      title: 'Financial Tools',
-      description: 'Track and plan your financial journey',
-      icon: <BarChart3 className="w-4 h-4" />,
-      path: '/financial-tools',
-    },
-    {
-      title: 'News & Updates',
-      description: 'Stay informed with athlete-specific financial news',
-      icon: <Newspaper className="w-4 h-4" />,
-      path: '/news',
-    },
-    {
-      title: 'NIL Income',
-      description: 'Manage your name, image, and likeness income',
-      icon: <TrendingUp className="w-4 h-4" />,
-      path: '/financial-tools',
-    },
-  ];
   
   return (
     <AppLayout>
       <div className="page-container">
-        {/* QuickStats component */}
+        {/* Header with QuickStats */}
         <QuickStats financialData={financialData} isLoading={isLoading} />
 
-        {/* Financial Profile Widget */}
-        <div className="mb-4">
-          <FinancialProfileWidget />
-        </div>
-        
-        {/* Main categories */}
-        <div className="mb-4">
-          <FadeIn>
-            <h2 className="text-lg font-semibold mb-2">Get Started</h2>
-          </FadeIn>
+        {/* Main Dashboard Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          {/* Left Column */}
+          <div className="space-y-6">
+            <EducationPreview />
+            <BudgetPieChart />
+          </div>
           
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-            {categories.map((category, index) => (
-              <CategoryCard
-                key={category.title}
-                title={category.title}
-                description={category.description}
-                icon={category.icon}
-                path={category.path}
-                index={index}
-              />
-            ))}
+          {/* Right Column */}
+          <div className="space-y-6">
+            <FinancialSummary />
           </div>
         </div>
-        
-        {/* Resources section */}
-        <div className="mb-4">
-          <ResourcesSection />
-        </div>
-        
-        {/* Recent activity */}
-        <RecentActivity />
       </div>
     </AppLayout>
   );
