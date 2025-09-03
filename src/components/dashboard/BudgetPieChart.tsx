@@ -3,12 +3,12 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recha
 import FadeIn from '@/components/animations/FadeIn';
 
 const mockBudgetData = [
-  { name: 'Housing', spent: 1200, budget: 1500, color: '#10B981' },
-  { name: 'Food', spent: 450, budget: 500, color: '#F59E0B' },
-  { name: 'Transportation', spent: 320, budget: 400, color: '#3B82F6' },
-  { name: 'Entertainment', spent: 180, budget: 200, color: '#8B5CF6' },
-  { name: 'Shopping', spent: 250, budget: 300, color: '#EC4899' },
-  { name: 'Other', spent: 100, budget: 200, color: '#6B7280' }
+  { name: 'Housing', spent: 1200, budget: 1500, color: '#016F00' },
+  { name: 'Food', spent: 450, budget: 500, color: '#DAA520' },
+  { name: 'Transportation', spent: 320, budget: 400, color: '#4CBA4B' },
+  { name: 'Entertainment', spent: 180, budget: 200, color: '#1F961E' },
+  { name: 'Shopping', spent: 250, budget: 300, color: '#B58A1B' },
+  { name: 'Other', spent: 100, budget: 200, color: '#89D289' }
 ];
 
 const RADIAN = Math.PI / 180;
@@ -40,22 +40,22 @@ const BudgetPieChart = () => {
   const budgetPercentage = ((totalSpent / totalBudget) * 100).toFixed(1);
 
   return (
-    <FadeIn className="bg-card rounded-lg p-6 border border-border shadow-sm hover:shadow-md transition-shadow duration-300">
+    <FadeIn className="bg-gradient-to-br from-green-50 to-gold-50 rounded-lg p-6 border border-green-200 shadow-lg hover:shadow-xl transition-all duration-300">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-xl font-semibold text-card-foreground mb-1">Budget Overview</h3>
-          <p className="text-sm text-muted-foreground">Monthly spending breakdown</p>
+          <h3 className="text-xl font-semibold text-green-800 mb-1">Budget Overview</h3>
+          <p className="text-sm text-green-600">Monthly spending breakdown</p>
         </div>
-        <div className="text-right">
-          <div className="text-2xl font-bold text-card-foreground">
+        <div className="text-right bg-white/60 rounded-lg p-3 border border-gold-200">
+          <div className="text-2xl font-bold text-green-700">
             ${totalSpent.toLocaleString()}
           </div>
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-green-600">
             of ${totalBudget.toLocaleString()} ({budgetPercentage}%)
           </div>
-          <div className="w-20 h-1.5 bg-muted rounded-full mt-2">
+          <div className="w-20 h-2 bg-green-100 rounded-full mt-2">
             <div 
-              className="h-full bg-primary rounded-full transition-all duration-500"
+              className="h-full bg-gradient-to-r from-green-500 to-gold-500 rounded-full transition-all duration-500"
               style={{ width: `${budgetPercentage}%` }}
             />
           </div>
@@ -85,9 +85,10 @@ const BudgetPieChart = () => {
               formatter={(value: number, name: string) => [`$${value.toLocaleString()}`, name]}
               labelStyle={{ color: 'hsl(var(--card-foreground))' }}
               contentStyle={{ 
-                backgroundColor: 'hsl(var(--card))', 
-                border: '1px solid hsl(var(--border))',
-                borderRadius: '8px'
+                backgroundColor: 'rgba(255, 245, 234, 0.95)', 
+                border: '1px solid #DAA520',
+                borderRadius: '8px',
+                color: '#016F00'
               }}
             />
           </PieChart>
@@ -100,24 +101,24 @@ const BudgetPieChart = () => {
           const isOverBudget = item.spent > item.budget;
           
           return (
-            <div key={item.name} className="flex items-center space-x-3 p-3 rounded-lg bg-accent/30 hover:bg-accent/50 transition-colors">
+            <div key={item.name} className="flex items-center space-x-3 p-3 rounded-lg bg-white/70 hover:bg-white/90 transition-all duration-300 border border-green-100 hover:border-gold-300 hover:shadow-md">
               <div 
-                className="w-4 h-4 rounded-full flex-shrink-0" 
+                className="w-4 h-4 rounded-full flex-shrink-0 shadow-sm" 
                 style={{ backgroundColor: item.color }}
               />
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-card-foreground truncate">{item.name}</div>
+                <div className="text-sm font-medium text-green-800 truncate">{item.name}</div>
                 <div className="flex items-center justify-between mt-1">
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-xs text-green-600">
                     ${item.spent.toLocaleString()}
                   </span>
-                  <span className={`text-xs font-medium ${isOverBudget ? 'text-destructive' : 'text-primary'}`}>
+                  <span className={`text-xs font-medium ${isOverBudget ? 'text-red-600' : 'text-gold-600'}`}>
                     {percentage}%
                   </span>
                 </div>
-                <div className="w-full h-1 bg-muted rounded-full mt-1">
+                <div className="w-full h-1.5 bg-green-100 rounded-full mt-1">
                   <div 
-                    className={`h-full rounded-full transition-all duration-300 ${isOverBudget ? 'bg-destructive' : 'bg-primary'}`}
+                    className={`h-full rounded-full transition-all duration-300 ${isOverBudget ? 'bg-red-400' : 'bg-gradient-to-r from-green-400 to-gold-400'}`}
                     style={{ width: `${Math.min(100, parseInt(percentage))}%` }}
                   />
                 </div>
