@@ -37,61 +37,6 @@ const QuickStats: React.FC<QuickStatsProps> = ({ financialData, isLoading }) => 
         </button>
       </div>
       
-      {/* Quick stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-3">
-        <div className="bg-green p-2.5 rounded-lg shadow-sm border border-cream/10 text-cream">
-          <div className="text-xs uppercase tracking-wider text-cream/70 mb-1">Emergency Fund</div>
-          <div className="flex items-baseline">
-            <span className="text-base md:text-lg font-semibold mr-2">
-              ${financialData?.emergency_fund_current?.toLocaleString() || '0'}
-            </span>
-            <span className="text-xs text-cream/70">
-              / ${financialData?.emergency_fund_goal?.toLocaleString() || '5,000'} goal
-            </span>
-          </div>
-          <div className="w-full h-1.5 bg-cream/20 rounded-full mt-1.5">
-            <div 
-              className="h-full bg-gold rounded-full" 
-              style={{ 
-                width: `${
-                  financialData 
-                    ? (financialData.emergency_fund_current / financialData.emergency_fund_goal) * 100 
-                    : 0
-                }%` 
-              }} 
-            />
-          </div>
-        </div>
-        
-        <div className="bg-green p-2.5 rounded-lg shadow-sm border border-cream/10 text-cream">
-          <div className="text-xs uppercase tracking-wider text-cream/70 mb-1">Investments</div>
-          <div className="flex items-baseline">
-            <span className="text-base md:text-lg font-semibold mr-2">
-              ${financialData?.investments_total?.toLocaleString() || '0'}
-            </span>
-            <span className={`text-xs ${(financialData?.investments_change || 0) >= 0 ? 'text-gold' : 'text-red-300'}`}>
-              {(financialData?.investments_change || 0) >= 0 ? '+' : ''}
-              {financialData?.investments_change?.toLocaleString() || '0'}%
-            </span>
-          </div>
-          <div className="flex items-center mt-1">
-            <PiggyBank className="w-3 h-3 text-cream mr-1" />
-            <span className="text-xs text-cream/70">Diversified Portfolio</span>
-          </div>
-        </div>
-        
-        <div className="bg-green p-2.5 rounded-lg shadow-sm border border-cream/10 text-cream">
-          <div className="text-xs uppercase tracking-wider text-cream/70 mb-1">Cash Available</div>
-          <div className="flex items-baseline">
-            <span className="text-base md:text-lg font-semibold">
-              ${financialData?.cash_on_hand?.toLocaleString() || '0'}
-            </span>
-          </div>
-          <div className="flex items-center mt-1">
-            <span className="text-xs text-cream/70">Last updated today</span>
-          </div>
-        </div>
-      </div>
     </FadeIn>
   );
 };
